@@ -38,6 +38,19 @@ class Piece():
         '''
         return 'X'
     
+    def _in_bounds(self, x, y):
+        '''
+            Args:
+                self
+                x: integer indicating X coordinate of square to check
+                y: integer indicating Y coordinate of square to check
+            Output:
+                returns boolean value
+            Purpose:
+                determines if provided X and Y coordinates refer to a grid square within the bounds of the game board
+        '''
+        return (x >= 0 and x < 8) and (y >= 0 and y < 8)
+    
 class King(Piece):
     pass
 
@@ -55,3 +68,8 @@ class Rook(Piece):
 
 class Pawn(Piece):
     pass
+
+
+if __name__ == '__main__':
+    test_piece = Piece('white')
+    print(test_piece._in_bounds(-1, -1))
