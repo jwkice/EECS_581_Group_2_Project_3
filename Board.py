@@ -18,12 +18,13 @@ class Board():
         self.players_turn = 1
 
     def __str__(self):
-        output = '   a  b  c  d  e  f  g  h\n'
+        output = ''
         for index, row in enumerate(self.board_array):
-            output += f'{index+1} '
+            output += f'{8-index} '
             for cell in row:
                 output += str(cell)
             output += '\n'
+        output += '   a  b  c  d  e  f  g  h\n'
         return output
 
     
