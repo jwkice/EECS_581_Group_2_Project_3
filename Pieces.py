@@ -81,6 +81,8 @@ class Piece():
         '''
         return (x >= 0 and x < 8) and (y >= 0 and y < 8)
     
+    
+    
 class King(Piece):
     '''
         Purpose:
@@ -103,7 +105,18 @@ class Queen(Piece):
         Purpose:
             extends Piece base class with movement rules specific to Queen piece
     '''
-    pass
+    def valid_moves(self, board):
+        valid_array=[]
+        directions_array = [(-1,-1), (-1,1), (1,1), (1, -1), (-1,0), (1,0), (0,-1), (0, 1)]
+        for rank_offset, file_offset in directions_array:
+            temp_rank = self.rank + rank_offset
+            temp_file = self.file + file_offset
+            while self._in_bounds(temp_rank, temp_file):
+                valid_array.append((temp_rank, temp_file))
+                temp_rank += rank_offset
+                temp_file += file_offset
+
+        return valid_array
 
 class Knight(Piece):
     '''
@@ -117,14 +130,37 @@ class Bishop(Piece):
         Purpose:
             extends Piece base class with movement rules specific to Bishop piece
     '''
-    pass
+    def valid_moves(self, board):
+        valid_array=[]
+        directions_array = [(-1,-1), (-1,1), (1,1), (1, -1)]
+        for rank_offset, file_offset in directions_array:
+            temp_rank = self.rank + rank_offset
+            temp_file = self.file + file_offset
+            while self._in_bounds(temp_rank, temp_file):
+                valid_array.append((temp_rank, temp_file))
+                temp_rank += rank_offset
+                temp_file += file_offset
+
+        return valid_array
 
 class Rook(Piece):
     '''
         Purpose:
             extends Piece base class with movement rules specific to Rook piece
     '''
-    pass
+    def valid_moves(self, board):
+        valid_array=[]
+        directions_array = [(-1,0), (1,0), (0,-1), (0, 1)]
+        for rank_offset, file_offset in directions_array:
+            temp_rank = self.rank + rank_offset
+            temp_file = self.file + file_offset
+            while self._in_bounds(temp_rank, temp_file):
+                valid_array.append((temp_rank, temp_file))
+                temp_rank += rank_offset
+                temp_file += file_offset
+
+        return valid_array
+
 
 class Pawn(Piece):
     '''
