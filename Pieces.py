@@ -1,6 +1,8 @@
 class Piece():
-    def __init__(self, color):
+    def __init__(self, color, rank, file):
         self.color = color
+        self.rank = rank
+        self.file = file
         self.has_powerup = False
 
     def valid_moves(self, board, position):
