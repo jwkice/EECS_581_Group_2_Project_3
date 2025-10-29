@@ -1,17 +1,52 @@
+'''
+Module Name: Board.py
+Purpose: store and manage square and board classes
+Input(s): None
+Output(s): None
+Author(s):  Jacob Kice
+            Joe Hotze
+Outside Source(s):  None
+Creation Date: 10/22/2025
+Updated Date: 10/28/2025
+'''
+
 import Pieces
 
 class Square():
+    '''
+        Args:
+            None
+        Purpose:
+            serves as manager for individual square on game board
+            stores square's piece and powerup status
+    '''
     def __init__(self):
         self.piece = None
         self.powerup = False
 
     def __str__(self):
+        '''
+            Args:
+                self
+            Output:
+                string representation of grid square
+            Purpose:
+                formats the square object as a string for display purposes
+        '''
         if self.piece is None:
             return '[ ]'
         else:
             return f'[{str(self.piece)}]'
 
 class Board():
+    '''
+        Args:
+            None
+        Purpose: 
+            serves as a game board manager for power chess
+            stores game board and game state information
+            handles direct interactions with game board
+    '''
     def __init__(self):
         self.board_array = [[Square() for _ in range(8)] for _ in range(8)]
         self.game_over = False
@@ -20,6 +55,14 @@ class Board():
         self.selected_moves = None
 
     def __str__(self):
+        '''
+            Args:
+                self
+            Output:
+                string representation of board
+            Purpose:
+                formats the board object as a string for display purposes
+        '''
         output = ''
         for index, row in enumerate(self.board_array):
             output += f'{8-index} '

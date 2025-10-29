@@ -1,4 +1,32 @@
+'''
+Module Name: Pieces.py
+Purpose: store and manage piece base class and specific derived classes
+Contents:   Piece class
+            King class
+            Queen class
+            Knight class
+            Bishop class
+            Rook class
+            Pawn class
+Input(s): None
+Output(s): None
+Author(s):  Jacob Kice
+            Joe Hotze
+Outside Source(s):  None
+Creation Date: 10/22/2025
+Updated Date: 10/28/2025
+'''
+
 class Piece():
+    '''
+        Args:
+            color: string indicating which player the piece belongs to; valid values: 'white', 'black'
+            rank: integer indicating the rank (row value) of the piece; valid values are 0 to 7
+            file: integer indicating the file (column value) of the piece; valid values are 0 to 7
+        Purpose:
+            base class for chess pieces
+            initalizes class members, generic and shared methods
+    '''
     def __init__(self, color, rank, file):
         self.color = color
         self.rank = rank
@@ -54,6 +82,10 @@ class Piece():
         return (x >= 0 and x < 8) and (y >= 0 and y < 8)
     
 class King(Piece):
+    '''
+        Purpose:
+            extends Piece base class with movement rules specific to King piece
+    '''
     def valid_moves(self, board):
         valid_array = []
         for rank_offset in range(-1, 2):
@@ -67,18 +99,38 @@ class King(Piece):
         return valid_array
 
 class Queen(Piece):
+    '''
+        Purpose:
+            extends Piece base class with movement rules specific to Queen piece
+    '''
     pass
 
 class Knight(Piece):
+    '''
+        Purpose:
+            extends Piece base class with movement rules specific to Knight piece
+    '''
     pass
 
 class Bishop(Piece):
+    '''
+        Purpose:
+            extends Piece base class with movement rules specific to Bishop piece
+    '''
     pass
 
 class Rook(Piece):
+    '''
+        Purpose:
+            extends Piece base class with movement rules specific to Rook piece
+    '''
     pass
 
 class Pawn(Piece):
+    '''
+        Purpose:
+            extends Piece base class with movement rules specific to Pawn piece
+    '''
     pass
 
 
