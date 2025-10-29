@@ -54,7 +54,7 @@ class Piece():
         return (x >= 0 and x < 8) and (y >= 0 and y < 8)
     
 class King(Piece):
-    def valid_moves(self, board, position):
+    def valid_moves(self, board):
         valid_array = []
         for rank_offset in range(-1, 2):
             for file_offset in range(-1, 2):
