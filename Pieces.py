@@ -32,6 +32,7 @@ class Piece():
         self.rank = rank
         self.file = file
         self.has_powerup = False
+        self.character = 'X'
 
     def valid_moves(self, board):
         '''
@@ -66,7 +67,7 @@ class Piece():
             Purpose:
                 formats the piece object as a string for display purposes
         '''
-        return 'X'
+        return self.character
     
     def _in_bounds(self, x, y):
         '''
@@ -88,17 +89,10 @@ class King(Piece):
         Purpose:
             extends Piece base class with movement rules specific to King piece
     '''
-    def __str__(self):
-        '''
-            Args:
-                self
-            Output:
-                string representation of piece
-            Purpose:
-                formats the piece object as a string for display purposes
-        '''
-        return 'K'
-    
+    def __init__(self, color, rank, file):
+        super().__init__(color, rank, file)
+        self.character = 'K'
+
     def valid_moves(self, board):
         valid_array = []
         for rank_offset in range(-1, 2):
@@ -116,16 +110,9 @@ class Queen(Piece):
         Purpose:
             extends Piece base class with movement rules specific to Queen piece
     '''
-    def __str__(self):
-        '''
-            Args:
-                self
-            Output:
-                string representation of piece
-            Purpose:
-                formats the piece object as a string for display purposes
-        '''
-        return 'Q'
+    def __init__(self, color, rank, file):
+        super().__init__(color, rank, file)
+        self.character = 'Q'
 
     def valid_moves(self, board):
         valid_array=[]
@@ -145,33 +132,20 @@ class Knight(Piece):
         Purpose:
             extends Piece base class with movement rules specific to Knight piece
     '''
-    def __str__(self):
-        '''
-            Args:
-                self
-            Output:
-                string representation of piece
-            Purpose:
-                formats the piece object as a string for display purposes
-        '''
-        return 'N'
+    def __init__(self, color, rank, file):
+        super().__init__(color, rank, file)
+        self.character = 'N'
+
 
 class Bishop(Piece):
     '''
         Purpose:
             extends Piece base class with movement rules specific to Bishop piece
     '''
-    def __str__(self):
-        '''
-            Args:
-                self
-            Output:
-                string representation of piece
-            Purpose:
-                formats the piece object as a string for display purposes
-        '''
-        return 'B'
-    
+    def __init__(self, color, rank, file):
+        super().__init__(color, rank, file)
+        self.character = 'B'
+
     def valid_moves(self, board):
         valid_array=[]
         directions_array = [(-1,-1), (-1,1), (1,1), (1, -1)]
@@ -190,16 +164,9 @@ class Rook(Piece):
         Purpose:
             extends Piece base class with movement rules specific to Rook piece
     '''
-    def __str__(self):
-        '''
-            Args:
-                self
-            Output:
-                string representation of piece
-            Purpose:
-                formats the piece object as a string for display purposes
-        '''
-        return 'R'
+    def __init__(self, color, rank, file):
+        super().__init__(color, rank, file)
+        self.character = 'R'
 
     def valid_moves(self, board):
         valid_array=[]
@@ -220,16 +187,9 @@ class Pawn(Piece):
         Purpose:
             extends Piece base class with movement rules specific to Pawn piece
     '''
-    def __str__(self):
-        '''
-            Args:
-                self
-            Output:
-                string representation of piece
-            Purpose:
-                formats the piece object as a string for display purposes
-        '''
-        return 'P'
+    def __init__(self, color, rank, file):
+        super().__init__(color, rank, file)
+        self.character = 'P'
 
 
 if __name__ == '__main__':
