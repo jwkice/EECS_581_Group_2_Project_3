@@ -33,7 +33,7 @@ class Piece():
         self.file = file
         self.has_powerup = False
 
-    def valid_moves(self, board, position):
+    def valid_moves(self, board):
         '''
             Args:
                 board: current game state
@@ -45,7 +45,7 @@ class Piece():
         '''
         raise(NotImplementedError('valid_moves has not been implemented for the calling object'))
     
-    def valid_power_moves(self, board, position):
+    def valid_power_moves(self, board):
         '''
             Args:
                 board: current game state
@@ -88,6 +88,17 @@ class King(Piece):
         Purpose:
             extends Piece base class with movement rules specific to King piece
     '''
+    def __str__(self):
+        '''
+            Args:
+                self
+            Output:
+                string representation of piece
+            Purpose:
+                formats the piece object as a string for display purposes
+        '''
+        return 'K'
+    
     def valid_moves(self, board):
         valid_array = []
         for rank_offset in range(-1, 2):
@@ -105,6 +116,17 @@ class Queen(Piece):
         Purpose:
             extends Piece base class with movement rules specific to Queen piece
     '''
+    def __str__(self):
+        '''
+            Args:
+                self
+            Output:
+                string representation of piece
+            Purpose:
+                formats the piece object as a string for display purposes
+        '''
+        return 'Q'
+
     def valid_moves(self, board):
         valid_array=[]
         directions_array = [(-1,-1), (-1,1), (1,1), (1, -1), (-1,0), (1,0), (0,-1), (0, 1)]
@@ -123,13 +145,33 @@ class Knight(Piece):
         Purpose:
             extends Piece base class with movement rules specific to Knight piece
     '''
-    pass
+    def __str__(self):
+        '''
+            Args:
+                self
+            Output:
+                string representation of piece
+            Purpose:
+                formats the piece object as a string for display purposes
+        '''
+        return 'N'
 
 class Bishop(Piece):
     '''
         Purpose:
             extends Piece base class with movement rules specific to Bishop piece
     '''
+    def __str__(self):
+        '''
+            Args:
+                self
+            Output:
+                string representation of piece
+            Purpose:
+                formats the piece object as a string for display purposes
+        '''
+        return 'B'
+    
     def valid_moves(self, board):
         valid_array=[]
         directions_array = [(-1,-1), (-1,1), (1,1), (1, -1)]
@@ -148,6 +190,17 @@ class Rook(Piece):
         Purpose:
             extends Piece base class with movement rules specific to Rook piece
     '''
+    def __str__(self):
+        '''
+            Args:
+                self
+            Output:
+                string representation of piece
+            Purpose:
+                formats the piece object as a string for display purposes
+        '''
+        return 'R'
+
     def valid_moves(self, board):
         valid_array=[]
         directions_array = [(-1,0), (1,0), (0,-1), (0, 1)]
@@ -167,7 +220,16 @@ class Pawn(Piece):
         Purpose:
             extends Piece base class with movement rules specific to Pawn piece
     '''
-    pass
+    def __str__(self):
+        '''
+            Args:
+                self
+            Output:
+                string representation of piece
+            Purpose:
+                formats the piece object as a string for display purposes
+        '''
+        return 'P'
 
 
 if __name__ == '__main__':
