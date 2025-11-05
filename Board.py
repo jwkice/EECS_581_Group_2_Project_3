@@ -11,6 +11,7 @@ Updated Date: 10/28/2025
 '''
 
 import Pieces
+from Player import Player
 
 class Square():
     '''
@@ -53,6 +54,54 @@ class Board():
         self.players_turn = 1
         self.selected = None
         self.selected_moves = None
+        self._initialize()
+
+    def _initialize(self):
+        '''
+            Args:
+                self
+            Output:
+                None
+            Purpose:
+                initializes player and piece objects
+                assign created pieces to appropriate player object, and board position
+                sets player 1 as current player
+        '''
+        self.player_one = Player('white')
+        self.player_one.turn = True
+        self.player_two = Player('black')
+
+        for i in range(16): #Place pawns
+            if i < 8:   #Place white pawns
+                self.add_piece(self.player_one, 'pawn', 6, i)
+            else:   #Place black pawns
+                self.add_piece(self.player_two, 'pawn', 1, i-8)
+
+        #Place rooks
+        self.add_piece(self.player_one, 'rook', 7, 0)
+        self.add_piece(self.player_one, 'rook', 7, 7)
+        self.add_piece(self.player_two, 'rook', 0, 0)
+        self.add_piece(self.player_two, 'rook', 0, 7)
+
+        #Place knights
+        self.add_piece(self.player_one, 'knight', 7, 1)
+        self.add_piece(self.player_one, 'knight', 7, 6)
+        self.add_piece(self.player_two, 'knight', 0, 1)
+        self.add_piece(self.player_two, 'knight', 0, 6)
+
+        #Place bishops
+        self.add_piece(self.player_one, 'bishop', 7, 2)
+        self.add_piece(self.player_one, 'bishop', 7, 5)
+        self.add_piece(self.player_two, 'bishop', 0, 2)
+        self.add_piece(self.player_two, 'bishop', 0, 5)
+
+        #Place queens
+        self.add_piece(self.player_one, 'queen', 7, 3)
+        self.add_piece(self.player_two, 'queen', 0, 3)
+
+        #Place kings
+        self.add_piece(self.player_one, 'king', 7, 4)
+        self.add_piece(self.player_two, 'king', 0, 4)        
 
     def __str__(self):
         '''
@@ -73,7 +122,7 @@ class Board():
         output += '   a  b  c  d  e  f  g  h\n'
         return output
 
-    def add_piece(self, piece_type, color, rank, file):
+    def add_piece(self, player, piece_type, rank, file):
         '''
             Args:
                 self
@@ -86,6 +135,7 @@ class Board():
             Purpose:
                 initializes a new piece of the indicated type, assigns it to the given square on the board
         '''
+        color = player.color
         if self.board_array[rank][file].piece is None:
             if piece_type == 'pawn':
                 new_piece = Pieces.Pawn(color, rank, file)
@@ -103,6 +153,7 @@ class Board():
                 raise(RuntimeError(f'Invalid Piece Type: {piece_type}'))
             
             self.board_array[rank][file].piece = new_piece
+            player.pieces.append(new_piece)
         else:
             raise(RuntimeError(f'Square ({rank}, {file}) already has a piece'))
     
@@ -158,11 +209,4 @@ class Board():
     
 if __name__ == '__main__':
     game = Board()
-    game.add_piece('king', 'white', 4, 4)
     print(game)
-    game.select(4, 4)
-    rank = int(input('Rank: '))
-    file = int(input('File: '))
-    game.select(rank, file)
-    print(game)
-    game.select(rank, file)
