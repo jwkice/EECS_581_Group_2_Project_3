@@ -16,6 +16,7 @@ Outside Source(s):  None
 Creation Date: 10/22/2025
 Updated Date: 10/28/2025
 '''
+# Idea: each piece is fed the board as well and uses that to broadcast its own valid moves
 
 class Piece():
     '''
@@ -92,6 +93,7 @@ class King(Piece):
     def __init__(self, color, rank, file):
         super().__init__(color, rank, file)
         self.character = 'K'
+        self.has_moved = False
 
     def valid_moves(self, board):
         valid_array = []
@@ -135,6 +137,16 @@ class Knight(Piece):
     def __init__(self, color, rank, file):
         super().__init__(color, rank, file)
         self.character = 'N'
+
+    def valid_moves(self, board):
+        valid_array = []
+        knight_moves = [(-1,2), (1,2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2,1)]
+        for potential_move in knight_moves:
+            temp_rank = self.rank + potential_move[0]
+            temp_file = self.file + potential_move[1]
+            if self._in_bounds(temp_rank, temp_file):
+                valid_array.append((temp_rank, temp_file))
+        return valid_array
 
 
 class Bishop(Piece):
@@ -190,6 +202,13 @@ class Pawn(Piece):
     def __init__(self, color, rank, file):
         super().__init__(color, rank, file)
         self.character = 'P'
+        self.has_moved = False
+    
+    def valid_moves(self, board):
+        valid_array = []
+        if (self._in_bounds(self.rank, self.file+1)):
+            valid_array.append(self.rank, self.file+1)
+        return valid_array
 
 
 if __name__ == '__main__':
