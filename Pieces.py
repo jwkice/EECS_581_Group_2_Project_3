@@ -12,12 +12,13 @@ Input(s): None
 Output(s): None
 Author(s):  Jacob Kice
             Joe Hotze
+            Gunther Luechtefeld
 Outside Source(s):  None
 Creation Date: 10/22/2025
-Updated Date: 10/28/2025
+Updated Date: 11/07/2025
 '''
 # Idea: each piece is fed the board as well and uses that to broadcast its own valid moves
-
+import Board as B # testing
 class Piece():
     '''
         Args:
@@ -84,7 +85,6 @@ class Piece():
         return (x >= 0 and x < 8) and (y >= 0 and y < 8)
     
     
-    
 class King(Piece):
     '''
         Purpose:
@@ -92,20 +92,47 @@ class King(Piece):
     '''
     def __init__(self, color, rank, file):
         super().__init__(color, rank, file)
-        self.character = 'K'
+        if color == 'white':
+            self.character = 'k'
+        else:
+            self.character = 'K'
+
         self.has_moved = False
+        self.check = False
+        self.checkmate = False
 
     def valid_moves(self, board):
         valid_array = []
+        friendly_pieces = []
         for rank_offset in range(-1, 2):
             for file_offset in range(-1, 2):
-                if rank_offset == 0 and file_offset == 0:
-                    continue
+                new_rank = self.rank + rank_offset
+                new_file = self.file + file_offset
+                # if king's square is being attacked, king is in check
+                if rank_offset == 0 and file_offset == 0: 
+                    self.check = board.board_array[new_rank][new_file].atk_by
 
-                if self._in_bounds(self.rank+rank_offset, self.file+file_offset):
-                    valid_array.append((self.rank+rank_offset, self.file+file_offset))
-                
-        return valid_array
+                if self._in_bounds(new_rank, new_file):
+                    # valid move if enemy piece in range and not covered by enemy piece
+                    if board.board_array[new_rank][new_file].piece is not None and board.board_array[new_rank][new_file].piece.color is not self.color and not board.board_array[new_rank][new_file].atk_by:
+                        valid_array.append((new_rank, new_file))
+
+                    # valid move if no piece on square and is not being covered by enemy piece
+                    elif board.board_array[new_rank][new_file].piece is None and not board.board_array[new_rank][new_file].atk_by:
+                        valid_array.append((new_rank, new_file))
+        
+        # no valid moves and king is in check
+        if len(valid_array) == 0 and self.check:
+            self.checkmate = True
+            return valid_array
+
+        else:
+            self.checkmate = False
+            return valid_array
+
+        
+
+
 
 class Queen(Piece):
     '''
@@ -114,7 +141,10 @@ class Queen(Piece):
     '''
     def __init__(self, color, rank, file):
         super().__init__(color, rank, file)
-        self.character = 'Q'
+        if color == 'white':
+            self.character = 'q'
+        else:
+            self.character = 'Q'
 
     def valid_moves(self, board):
         valid_array=[]
@@ -123,11 +153,20 @@ class Queen(Piece):
             temp_rank = self.rank + rank_offset
             temp_file = self.file + file_offset
             while self._in_bounds(temp_rank, temp_file):
+                if board.board_array[temp_rank][temp_file].piece is not None and board.board_array[temp_rank][temp_file].piece.color is not self.color:
+                    valid_array.append((temp_rank, temp_file))
+                    break
+                
+                # if there is a piece of same color
+                elif board.board_array[temp_rank][temp_file].piece is not None:
+                    break
+
                 valid_array.append((temp_rank, temp_file))
                 temp_rank += rank_offset
                 temp_file += file_offset
 
         return valid_array
+
 
 class Knight(Piece):
     '''
@@ -136,7 +175,10 @@ class Knight(Piece):
     '''
     def __init__(self, color, rank, file):
         super().__init__(color, rank, file)
-        self.character = 'N'
+        if color == 'white':
+            self.character = 'n'
+        else:
+            self.character = 'N'
 
     def valid_moves(self, board):
         valid_array = []
@@ -145,7 +187,12 @@ class Knight(Piece):
             temp_rank = self.rank + potential_move[0]
             temp_file = self.file + potential_move[1]
             if self._in_bounds(temp_rank, temp_file):
-                valid_array.append((temp_rank, temp_file))
+                if board.board_array[temp_rank][temp_file].piece is not None and board.board_array[temp_rank][temp_file].piece.color is not self.color:
+                    valid_array.append((temp_rank, temp_file))
+
+                elif board.board_array[temp_rank][temp_file].piece is None:
+                    valid_array.append((temp_rank, temp_file))
+            
         return valid_array
 
 
@@ -156,7 +203,10 @@ class Bishop(Piece):
     '''
     def __init__(self, color, rank, file):
         super().__init__(color, rank, file)
-        self.character = 'B'
+        if color == 'white':
+            self.character = 'b'
+        else:
+            self.character = 'B'
 
     def valid_moves(self, board):
         valid_array=[]
@@ -165,11 +215,21 @@ class Bishop(Piece):
             temp_rank = self.rank + rank_offset
             temp_file = self.file + file_offset
             while self._in_bounds(temp_rank, temp_file):
+                # if there is a piece and that piece is not self.color
+                if board.board_array[temp_rank][temp_file].piece is not None and board.board_array[temp_rank][temp_file].piece.color is not self.color:
+                    valid_array.append((temp_rank, temp_file))
+                    break
+                
+                # if there is a piece of same color
+                elif board.board_array[temp_rank][temp_file].piece is not None:
+                    break
+
                 valid_array.append((temp_rank, temp_file))
                 temp_rank += rank_offset
                 temp_file += file_offset
 
         return valid_array
+
 
 class Rook(Piece):
     '''
@@ -178,15 +238,29 @@ class Rook(Piece):
     '''
     def __init__(self, color, rank, file):
         super().__init__(color, rank, file)
-        self.character = 'R'
+        if color == 'white':
+            self.character = 'r'
+        else:
+            self.character = 'R'
+            
 
     def valid_moves(self, board):
         valid_array=[]
         directions_array = [(-1,0), (1,0), (0,-1), (0, 1)]
         for rank_offset, file_offset in directions_array:
+            
             temp_rank = self.rank + rank_offset
             temp_file = self.file + file_offset
             while self._in_bounds(temp_rank, temp_file):
+                # if there is a piece and that piece is not self.color
+                if board.board_array[temp_rank][temp_file].piece is not None and board.board_array[temp_rank][temp_file].piece.color is not self.color:
+                    valid_array.append((temp_rank, temp_file))
+                    break
+                
+                # if there is a piece of same color
+                elif board.board_array[temp_rank][temp_file].piece is not None:
+                    break
+
                 valid_array.append((temp_rank, temp_file))
                 temp_rank += rank_offset
                 temp_file += file_offset
@@ -201,16 +275,55 @@ class Pawn(Piece):
     '''
     def __init__(self, color, rank, file):
         super().__init__(color, rank, file)
-        self.character = 'P'
+        if color == 'white':
+            self.character = 'p'
+        else:
+            self.character = 'P'
+
         self.has_moved = False
     
     def valid_moves(self, board):
         valid_array = []
-        if (self._in_bounds(self.rank, self.file+1)):
-            valid_array.append(self.rank, self.file+1)
+        if self.color == 'white':
+            
+            if (self._in_bounds(self.rank - 1, self.file)) and board.board_array[self.rank - 1][self.file].piece is None:
+                valid_array.append((self.rank - 1, self.file))
+
+            if (self._in_bounds(self.rank - 2, self.file)) and board.board_array[self.rank - 1][self.file].piece is None and not self.has_moved:
+                valid_array.append((self.rank - 2, self.file))
+            
+            if (self._in_bounds(self.rank - 1, self.file + 1)) and board.board_array[self.rank - 1][self.file + 1].piece is not None:
+                if self.color is not board.board_array[self.rank - 1][self.file + 1].piece.color:
+                    valid_array.append((self.rank - 1, self.file + 1))
+            
+            if (self._in_bounds(self.rank - 1, self.file - 1)) and board.board_array[self.rank - 1][self.file - 1].piece is not None:
+                if self.color is not board.board_array[self.rank - 1][self.file - 1].piece.color:
+                    valid_array.append((self.rank - 1, self.file - 1))
+        
+
+        elif self.color == 'black':
+            if (self._in_bounds(self.rank + 1, self.file)) and board.board_array[self.rank + 1][self.file].piece is None:
+                valid_array.append((self.rank + 1, self.file))
+
+            if (self._in_bounds(self.rank + 2, self.file)) and board.board_array[self.rank + 1][self.file].piece is None and not self.has_moved:
+                valid_array.append((self.rank + 2, self.file))
+            
+            if (self._in_bounds(self.rank + 1, self.file + 1)) and board.board_array[self.rank + 1][self.file + 1].piece is not None:
+                if self.color is not board.board_array[self.rank + 1][self.file + 1].piece.color:
+                    valid_array.append((self.rank + 1, self.file + 1))
+            
+            if (self._in_bounds(self.rank + 1, self.file - 1)) and board.board_array[self.rank + 1][self.file - 1].piece is not None:
+                if self.color is not board.board_array[self.rank + 1][self.file - 1].piece.color:
+                    valid_array.append((self.rank + 1, self.file - 1))
+
         return valid_array
 
 
 if __name__ == '__main__':
-    test_piece = Piece('white')
-    print(test_piece._in_bounds(-1, -1))
+    # test_piece = Piece('white')
+    # print(test_piece._in_bounds(-1, -1))
+    game = B.Board()
+    print(game.board_array[0][4].piece)
+    print(game.board_array[0][4].piece.valid_moves(game))
+    print(game.board_array[0][4].piece.check)
+    print(game)

@@ -5,9 +5,10 @@ Input(s): None
 Output(s): None
 Author(s):  Jacob Kice
             Joe Hotze
+            Gunther Luechtefeld
 Outside Source(s):  None
 Creation Date: 10/22/2025
-Updated Date: 10/28/2025
+Updated Date: 11/07/2025
 '''
 
 import Pieces
@@ -24,6 +25,7 @@ class Square():
     def __init__(self):
         self.piece = None
         self.powerup = False
+        self.atk_by = False
 
     def __str__(self):
         '''
@@ -102,6 +104,29 @@ class Board():
         #Place kings
         self.add_piece(self.player_one, 'king', 7, 4)
         self.add_piece(self.player_two, 'king', 0, 4)        
+
+    
+    def _reset_atk_by(self):
+        for rank in range(0,8):
+            for file in range(0,8):
+                self.board_array[rank][file].atk_by = False
+    
+    # used when the king is selected to determine ineligble spots for the king to move to
+    def king_danger_spaces(self, color):
+        self._reset_atk_by()
+        coordinates = []
+
+        # get all 'dangerous' coordinates
+        for rank in range(0,8):
+            for file in range(0,8):
+                if self.board_array[rank][file].piece is not None and self.board_array[rank][file].piece.color is not color:
+                    valid_moves = self.board_array[rank][file].piece.valid_moves(self)
+                    for i in valid_moves:
+                        self.board_array[rank][file].atk_by = True
+                            
+                    
+        
+    
 
     def __str__(self):
         '''
@@ -209,4 +234,5 @@ class Board():
     
 if __name__ == '__main__':
     game = Board()
+    game.king_danger_spaces('white')
     print(game)
