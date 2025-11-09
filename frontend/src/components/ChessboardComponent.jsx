@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import "./Chessboard.css"; // add CSS for layout
+import React, { useState, useEffect } from "react";
+import "./Chessboard.css";
 //white pieces
 import whiteKing from "../assets/pieces-png/white-king.png";
 import whiteQueen from "../assets/pieces-png/white-queen.png";
@@ -15,65 +15,167 @@ import blackBishop from "../assets/pieces-png/black-bishop.png";
 import blackKnight from "../assets/pieces-png/black-knight.png";
 import blackPawn from "../assets/pieces-png/black-pawn.png";
 
+const API_URL = "http://localhost:8000";
+
+const pieceImages = {
+  white: {
+    king: whiteKing,
+    queen: whiteQueen,
+    rook: whiteRook,
+    bishop: whiteBishop,
+    knight: whiteKnight,
+    pawn: whitePawn,
+  },
+  black: {
+    king: blackKing,
+    queen: blackQueen,
+    rook: blackRook,
+    bishop: blackBishop,
+    knight: blackKnight,
+    pawn: blackPawn,
+  }
+};
+
 export default function CustomBoard() {
   const [selected, setSelected] = useState(null);
+  const [gameId, setGameId] = useState(null);
+  const [boardState, setBoardState] = useState({});
+  const [currentTurn, setCurrentTurn] = useState(1);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  
   const files = "abcdefgh";
   const ranks = [8,7,6,5,4,3,2,1];
 
-  const handleGridClick = async (square) => {
-    if(!selected && pieces[square]){
-      setSelected(square);
-    }
-    
-    else if (selected){
-      const from = selected;
-      const to = square;
-      const movedPiece = pieces[from];
-      const newPieces = { ...pieces, [to]: movedPiece, [from]: undefined };
-      setPieces(newPieces);
+  // Initialize new game on component mount
+  useEffect(() => {
+    createNewGame();
+  }, []);
 
+  const createNewGame = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/game/new`, {
+        method: "POST",
+      });
+      const data = await response.json();
+      setGameId(data.game_id);
+      setBoardState(data.board_state);
+      setCurrentTurn(data.current_turn);
+      setMessage("New game started!");
+    } catch (error) {
+      console.error("Error creating game:", error);
+      setMessage("Failed to create game");
+    }
+    setLoading(false);
+  };
+
+  const handleGridClick = async (square) => {
+    if (loading || !gameId) return;
+
+    // Select a piece
+    if (!selected && boardState[square]) {
+      setSelected(square);
+      setMessage(`Selected ${square}`);
+    }
+    // Make a move
+    else if (selected) {
+      setLoading(true);
+      try {
+        const response = await fetch(`${API_URL}/api/game/move`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            game_id: gameId,
+            from_square: selected,
+            to_square: square,
+          }),
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          setBoardState(data.board_state);
+          setCurrentTurn(data.current_turn);
+          setMessage(data.message || "Move successful");
+        } else {
+          setMessage(data.message || "Invalid move");
+        }
+      } catch (error) {
+        console.error("Error making move:", error);
+        setMessage("Failed to make move");
+      }
       setSelected(null);
+      setLoading(false);
     }
   };
 
-  const [pieces, setPieces] = useState({
-    a8: blackRook, b8: blackKnight, c8: blackBishop, d8: blackQueen,
-    e8: blackKing, f8: blackBishop, g8: blackKnight, h8: blackRook,
-    a7: blackPawn, b7: blackPawn, c7: blackPawn, d7: blackPawn,
-    e7: blackPawn, f7: blackPawn, g7: blackPawn, h7: blackPawn,
+  const getPieceImage = (pieceData) => {
+    if (!pieceData) return null;
+    return pieceImages[pieceData.color]?.[pieceData.type];
+  };
 
-    a2: whitePawn, b2: whitePawn, c2: whitePawn, d2: whitePawn,
-    e2: whitePawn, f2: whitePawn, g2: whitePawn, h2: whitePawn,
-    a1: whiteRook, b1: whiteKnight, c1: whiteBishop, d1: whiteQueen,
-    e1: whiteKing, f1: whiteBishop, g1: whiteKnight, h1: whiteRook,
-  });
   return (
-    <div className="board">
-      {ranks.map((rank) => (
-        <div key={rank} className="rank">
-          {files.split("").map((file, fileIdx) => {
-            const square = `${file}${rank}`;
-            const isDark = (fileIdx + rank) % 2 === 1;
-            const color = isDark ? "#ABE7B2" : "#ECF4E8";
-            const isSelected = selected === square;
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
+      <div style={{ marginBottom: "20px", textAlign: "center" }}>
+        <h2>Chess Game</h2>
+        <p>Turn: {currentTurn === 1 ? "White" : "Black"}</p>
+        <p style={{ color: message.includes("Failed") ? "red" : "green" }}>
+          {message}
+        </p>
+        <button 
+          onClick={createNewGame}
+          disabled={loading}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            cursor: loading ? "not-allowed" : "pointer",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+          }}
+        >
+          New Game
+        </button>
+      </div>
 
-            return (
-              <div
-                key={square}
-                className="square"
-                style={{
-                  backgroundColor: isSelected ? "#FFD700" : color,
-                }}
-                onClick={() => handleGridClick(square)}
-              >
-                {pieces[square] && (
-                  <img src={pieces[square]} alt={square} className="piece" />
-                )}
-              </div>
-            );
-          })}
-        </div>
-      ))}
+      <div className="board">
+        {ranks.map((rank) => (
+          <div key={rank} className="rank">
+            {files.split("").map((file, fileIdx) => {
+              const square = `${file}${rank}`;
+              const isDark = (fileIdx + rank) % 2 === 1;
+              const color = isDark ? "#ABE7B2" : "#ECF4E8";
+              const isSelected = selected === square;
+              const pieceData = boardState[square];
+
+              return (
+                <div
+                  key={square}
+                  className="square"
+                  style={{
+                    backgroundColor: isSelected ? "#FFD700" : color,
+                    cursor: loading ? "not-allowed" : "pointer",
+                    opacity: loading ? 0.6 : 1,
+                  }}
+                  onClick={() => handleGridClick(square)}
+                >
+                  {pieceData && (
+                    <img 
+                      src={getPieceImage(pieceData)} 
+                      alt={`${pieceData.color} ${pieceData.type}`}
+                      className="piece" 
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
