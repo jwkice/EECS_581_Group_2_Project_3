@@ -14,6 +14,7 @@ import blackRook from "../assets/pieces-png/black-rook.png";
 import blackBishop from "../assets/pieces-png/black-bishop.png";
 import blackKnight from "../assets/pieces-png/black-knight.png";
 import blackPawn from "../assets/pieces-png/black-pawn.png";
+import red_circle from "../assets/red_circle.png"
 
 const API_URL = "http://localhost:8000";
 
@@ -43,6 +44,7 @@ export default function CustomBoard() {
   const [currentTurn, setCurrentTurn] = useState(1);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [validMoves, setValidMoves] = useState([]);
   
   const files = "abcdefgh";
   const ranks = [8,7,6,5,4,3,2,1];
@@ -77,9 +79,31 @@ export default function CustomBoard() {
     if (!selected && boardState[square]) {
       setSelected(square);
       setMessage(`Selected ${square}`);
+
+      //check for valid moves
+      const response = await fetch(`${API_URL}/api/game/valid-moves`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            game_id: gameId,
+            square: square
+          })
+        }
+      );
+      
+      const data = await response.json();
+      setValidMoves(data.valid_moves || []);
+
     }
     // Make a move
     else if (selected) {
+      if(selected === square) {
+        setSelected(null);
+        setValidMoves([]);
+        return;
+      }
       setLoading(true);
       try {
         const response = await fetch(`${API_URL}/api/game/move`, {
@@ -95,10 +119,11 @@ export default function CustomBoard() {
         });
         
         const data = await response.json();
-        
+
         if (data.success) {
           setBoardState(data.board_state);
           setCurrentTurn(data.current_turn);
+          setValidMoves([]);
           setMessage(data.message || "Move successful");
         } else {
           setMessage(data.message || "Invalid move");
@@ -151,6 +176,7 @@ export default function CustomBoard() {
               const color = isDark ? "#ABE7B2" : "#ECF4E8";
               const isSelected = selected === square;
               const pieceData = boardState[square];
+              const isValidMove = validMoves.includes(square);
 
               return (
                 <div
@@ -169,6 +195,13 @@ export default function CustomBoard() {
                       alt={`${pieceData.color} ${pieceData.type}`}
                       className="piece" 
                     />
+                  )}
+                  {isValidMove && (
+                    <img
+                      src={red_circle}
+                      height="35px"
+                      width="35px"
+                      className={"validmove"}/>
                   )}
                 </div>
               );
