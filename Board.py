@@ -224,10 +224,13 @@ class Board():
             NOTE:
                 needs integration of capture function once player objects are integrated
         '''
+        
         current_piece = self.board_array[self.selected[0]][self.selected[1]].piece
         current_piece.rank, current_piece.file = rank, file
         self.board_array[self.selected[0]][self.selected[1]].piece = None
         self.board_array[rank][file].piece = current_piece
+        if current_piece.character.lower() == "k" or current_piece.character.lower() == "p":
+            current_piece.has_moved = True
 
             
         

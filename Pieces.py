@@ -289,7 +289,7 @@ class Pawn(Piece):
             if (self._in_bounds(self.rank - 1, self.file)) and board.board_array[self.rank - 1][self.file].piece is None:
                 valid_array.append((self.rank - 1, self.file))
 
-            if (self._in_bounds(self.rank - 2, self.file)) and board.board_array[self.rank - 1][self.file].piece is None and not self.has_moved:
+            if (self._in_bounds(self.rank - 2, self.file)) and board.board_array[self.rank - 1][self.file].piece is None and board.board_array[self.rank - 2][self.file].piece is None and not self.has_moved:
                 valid_array.append((self.rank - 2, self.file))
             
             if (self._in_bounds(self.rank - 1, self.file + 1)) and board.board_array[self.rank - 1][self.file + 1].piece is not None:
@@ -305,7 +305,7 @@ class Pawn(Piece):
             if (self._in_bounds(self.rank + 1, self.file)) and board.board_array[self.rank + 1][self.file].piece is None:
                 valid_array.append((self.rank + 1, self.file))
 
-            if (self._in_bounds(self.rank + 2, self.file)) and board.board_array[self.rank + 1][self.file].piece is None and not self.has_moved:
+            if (self._in_bounds(self.rank + 2, self.file)) and board.board_array[self.rank + 1][self.file].piece is None and board.board_array[self.rank + 2][self.file].piece is None and not self.has_moved:
                 valid_array.append((self.rank + 2, self.file))
             
             if (self._in_bounds(self.rank + 1, self.file + 1)) and board.board_array[self.rank + 1][self.file + 1].piece is not None:
