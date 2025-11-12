@@ -11,6 +11,7 @@ Creation Date: 10/22/2025
 Updated Date: 11/07/2025
 '''
 
+import random as rng
 import Pieces
 from Player import Player
 
@@ -56,7 +57,10 @@ class Board():
         self.players_turn = 1
         self.selected = None
         self.selected_moves = None
+        self.powerup_delay_turns = 0
+        self.powerup_chance = 1
         self._initialize()
+        
 
     def _initialize(self):
         '''
@@ -174,6 +178,8 @@ class Board():
                 new_piece = Pieces.Queen(color, rank, file)
             elif piece_type == 'king':
                 new_piece = Pieces.King(color, rank, file)
+            elif piece_type == 'powerup':
+                new_piece = Pieces.PowerUp(color, rank, file)
             else:
                 raise(RuntimeError(f'Invalid Piece Type: {piece_type}'))
             
@@ -201,7 +207,7 @@ class Board():
         '''
         if self.selected is None:
             self.selected = (rank, file)
-            self.selected_moves = self.board_array[rank][file].piece.valid_moves(self.board_array)
+            self.selected_moves = self.board_array[rank][file].piece.valid_moves(self)
             print(self.selected_moves)
         elif self.selected == (rank, file):
             self.selected = None
@@ -220,22 +226,39 @@ class Board():
             Output:
                 returns nothing
             Purpose:
-                moves currently selected piece to new square
+                moves currently selected piece to new square and spawns powerups if applicable
             NOTE:
                 needs integration of capture function once player objects are integrated
         '''
         
         current_piece = self.board_array[self.selected[0]][self.selected[1]].piece
-        current_piece.rank, current_piece.file = rank, file
+        current_piece.rank, current_piece.file = rank, file 
         self.board_array[self.selected[0]][self.selected[1]].piece = None
+
+        if self.board_array[rank][file].piece is not None and self.board_array[rank][file].piece.has_powerup:
+            current_piece.has_powerup = True
+
         self.board_array[rank][file].piece = current_piece
         if current_piece.character.lower() == "k" or current_piece.character.lower() == "p":
             current_piece.has_moved = True
+
+        # increment turn counter
+        self.total_turns = self.total_turns + 1
+
+        # powerup placement loop after a player moves
+        # only happens after a specified amount of turns
+        if self.total_turns > self.powerup_delay_turns and rng.random() <= self.powerup_chance:
+            while True:
+                rand_rank = rng.randint(0,7)
+                rand_file = rng.randint(0,7)
+
+                if self.board_array[rand_rank][rand_file].piece == None:
+                    self.add_piece(self.player_one, 'powerup', rand_rank, rand_file)
+                    break
+                
 
             
         
     
 if __name__ == '__main__':
-    game = Board()
-    game.king_danger_spaces('white')
-    print(game)
+    pass

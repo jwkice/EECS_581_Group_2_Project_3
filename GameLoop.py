@@ -57,6 +57,7 @@ def main():
         dest_square = current_game.board_array[dest[0]][dest[1]]
         if dest_square.piece is not None:
             print(f"{current_player.color.capitalize()} captures {dest_square.piece.character}!")
+            print(current_game.board_array[dest[0]][dest[1]].piece.has_powerup)
 
         current_game.move(dest[0], dest[1])
 

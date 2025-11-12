@@ -130,9 +130,6 @@ class King(Piece):
             self.checkmate = False
             return valid_array
 
-        
-
-
 
 class Queen(Piece):
     '''
@@ -318,12 +315,21 @@ class Pawn(Piece):
 
         return valid_array
 
+class PowerUp(Piece):
+    '''
+        Purpose:
+            extends Piece base class with a PowerUp that other pieces can pick up
+    '''
+    def __init__(self, color, rank, file):
+        super().__init__(color, rank, file)
+        self.character = 'A'
+        self.color = 'green? whatever it doesnt really matter'
+        self.has_powerup = True
+
 
 if __name__ == '__main__':
     # test_piece = Piece('white')
     # print(test_piece._in_bounds(-1, -1))
     game = B.Board()
-    print(game.board_array[0][4].piece)
-    print(game.board_array[0][4].piece.valid_moves(game))
-    print(game.board_array[0][4].piece.check)
-    print(game)
+    test_piece = PowerUp('white', 0, 0)
+    print(test_piece.color)
