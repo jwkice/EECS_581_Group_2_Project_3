@@ -179,7 +179,13 @@ class Knight(Piece):
 
     def valid_moves(self, board):
         valid_array = []
-        knight_moves = [(-1,2), (1,2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2,1)]
+        if self.has_powerup:
+            knight_moves = [(-1,2), (1,2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2,1),
+                            (0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (-2, 0), (0, -2)]
+
+        else:
+            knight_moves = [(-1,2), (1,2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2,1)]
+
         for potential_move in knight_moves:
             temp_rank = self.rank + potential_move[0]
             temp_file = self.file + potential_move[1]

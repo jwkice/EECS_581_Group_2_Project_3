@@ -11,11 +11,17 @@ def translate_input(rank_file): # translates readable input into the abomination
 
 def main():
     current_game = Board()
+    # testing
+    current_game.board_array[0][2].piece.has_powerup = True
+    current_game.board_array[0][5].piece.has_powerup = True
+    current_game.board_array[7][2].piece.has_powerup = True
+    current_game.board_array[7][5].piece.has_powerup = True
     print("Begininng Game. Move format: position of piece to be moved, new position. Ex: e2 e4\n")
 
     while current_game.game_over != True:
         print(current_game)
-
+        if current_game.board_array[3][6].piece is not None:
+            print(current_game.board_array[3][6].piece.color)
         if current_game.players_turn == 1:
             current_player = current_game.player_one # white 
         else:

@@ -57,8 +57,9 @@ class Board():
         self.players_turn = 1
         self.selected = None
         self.selected_moves = None
+        self.total_turns = 0
         self.powerup_delay_turns = 0
-        self.powerup_chance = 1
+        self.powerup_chance = 0
         self._initialize()
         
 
@@ -230,17 +231,48 @@ class Board():
             NOTE:
                 needs integration of capture function once player objects are integrated
         '''
+        bishop_conversion = False
+        current_piece = self.board_array[self.selected[0]][self.selected[1]].piece # select piece to be moved
+        if current_piece.character.lower() == 'b' and current_piece.has_powerup: # if the current piece is a powered up bishop
+            print("powerup bishop")
+            # check if target is a piece of opposite color and is not a king
+            if self.board_array[rank][file].piece is not None and self.board_array[rank][file].piece.color is not current_piece.color and self.board_array[rank][file].piece.character.lower() != 'k':
+                print(f"valid conversion target, current piece is {current_piece.color} ")
+                
+                if current_piece.color == 'white':
+                    print("current piece is white")
+                    self.board_array[rank][file].piece.color = 'white'
+                    self.board_array[rank][file].piece.character = self.board_array[rank][file].piece.character.lower()
+                    bishop_conversion = True
+                    current_piece.has_powerup = False
+
+                elif current_piece.color == 'black':
+                    print("current piece is white")
+                    self.board_array[rank][file].piece.color = 'black'
+                    self.board_array[rank][file].piece.character = self.board_array[rank][file].piece.character.capitalize()
+                    bishop_conversion = True
+                    current_piece.has_powerup = False
+
+        print(bishop_conversion)
+        if not bishop_conversion:
+            current_piece.rank, current_piece.file = rank, file # set current piece's location to new rank and file
+
+            # if knight makes a power up move, get rid of powerup
+            if current_piece.character.lower() == 'n' and current_piece.has_powerup:
+                move_tuple = (self.selected[0] - rank, self.selected[1] - file)
+                if move_tuple not in [(-1,2), (1,2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2,1)]:
+                    current_piece.has_powerup = False
+
+            self.board_array[self.selected[0]][self.selected[1]].piece = None # set previous location to none
+
+            if self.board_array[rank][file].piece is not None and self.board_array[rank][file].piece.has_powerup:
+                current_piece.has_powerup = True
+
+            self.board_array[rank][file].piece = current_piece
+            if current_piece.character.lower() == "k" or current_piece.character.lower() == "p":
+                current_piece.has_moved = True
+
         
-        current_piece = self.board_array[self.selected[0]][self.selected[1]].piece
-        current_piece.rank, current_piece.file = rank, file 
-        self.board_array[self.selected[0]][self.selected[1]].piece = None
-
-        if self.board_array[rank][file].piece is not None and self.board_array[rank][file].piece.has_powerup:
-            current_piece.has_powerup = True
-
-        self.board_array[rank][file].piece = current_piece
-        if current_piece.character.lower() == "k" or current_piece.character.lower() == "p":
-            current_piece.has_moved = True
 
         # increment turn counter
         self.total_turns = self.total_turns + 1
