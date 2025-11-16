@@ -12,10 +12,10 @@ def translate_input(rank_file): # translates readable input into the abomination
 def main():
     current_game = Board()
     # testing
-    current_game.board_array[0][2].piece.has_powerup = True
-    current_game.board_array[0][5].piece.has_powerup = True
-    current_game.board_array[7][2].piece.has_powerup = True
-    current_game.board_array[7][5].piece.has_powerup = True
+    current_game.board_array[0][0].piece.has_powerup = True
+    current_game.board_array[0][7].piece.has_powerup = True
+    current_game.board_array[7][0].piece.has_powerup = True
+    current_game.board_array[7][7].piece.has_powerup = True
     print("Begininng Game. Move format: position of piece to be moved, new position. Ex: e2 e4\n")
 
     while current_game.game_over != True:
@@ -63,7 +63,7 @@ def main():
         dest_square = current_game.board_array[dest[0]][dest[1]]
         if dest_square.piece is not None:
             print(f"{current_player.color.capitalize()} captures {dest_square.piece.character}!")
-            print(current_game.board_array[dest[0]][dest[1]].piece.has_powerup)
+
 
         current_game.move(dest[0], dest[1])
 

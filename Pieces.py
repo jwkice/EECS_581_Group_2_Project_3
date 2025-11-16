@@ -143,7 +143,7 @@ class Queen(Piece):
         else:
             self.character = 'Q'
 
-    def valid_moves(self, board):
+    def _valid_moves(self, board):
         valid_array=[]
         directions_array = [(-1,-1), (-1,1), (1,1), (1, -1), (-1,0), (1,0), (0,-1), (0, 1)]
         for rank_offset, file_offset in directions_array:
