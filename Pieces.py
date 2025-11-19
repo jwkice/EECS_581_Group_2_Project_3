@@ -151,12 +151,23 @@ class Queen(Piece):
             temp_file = self.file + file_offset
             while self._in_bounds(temp_rank, temp_file):
                 if board.board_array[temp_rank][temp_file].piece is not None and board.board_array[temp_rank][temp_file].piece.color is not self.color:
+                    #There is an opposition piece
                     valid_array.append((temp_rank, temp_file))
-                    break
+                    if self.has_powerup:
+                        #If piece has powerup, mark target square as a movement option, continue along the movement path
+                        continue
+                    else:
+                        #Piece does not have powerup, mark target square as a movement option, terminate movement path
+                        break
                 
                 # if there is a piece of same color
                 elif board.board_array[temp_rank][temp_file].piece is not None:
-                    break
+                    if self.has_powerup:
+                        #If piece has powerup, continue along the movement path
+                        continue
+                    else:
+                        #Piece does not have powerup, terminate movement path
+                        break
 
                 valid_array.append((temp_rank, temp_file))
                 temp_rank += rank_offset
