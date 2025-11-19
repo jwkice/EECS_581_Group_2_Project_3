@@ -174,6 +174,9 @@ class Queen(Piece):
                 temp_file += file_offset
 
         return valid_array
+    
+    def valid_moves(self, board):
+        return self._valid_moves(board)
 
 
 class Knight(Piece):
@@ -342,6 +345,9 @@ class PowerUp(Piece):
         self.character = 'A'
         self.color = 'green? whatever it doesnt really matter'
         self.has_powerup = True
+
+    def valid_moves(self, board):
+        return []
 
 
 if __name__ == '__main__':
