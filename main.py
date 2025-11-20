@@ -156,7 +156,6 @@ def make_move(move: MoveRequest):
                 "message": f"Not your turn. It's {current_player_color}'s turn"
             }
         
-        # Get valid moves for piece
         valid_moves = from_square.piece.valid_moves(board)
         
         # Check if the destination is valid move
@@ -177,21 +176,18 @@ def make_move(move: MoveRequest):
         # Set board's selected position for move() method
         board.selected = (from_rank, from_file)
         
-        # Make the move
         board.move(to_rank, to_file)
-        
-        # If pawn update pawn's has_moved flag
-        if isinstance(to_square.piece, Pieces.Pawn):
-            to_square.piece.has_moved = True
         
         # Switch turns
         board.players_turn = 2 if board.players_turn == 1 else 1
         
-        # Check if the king is in checkmate
+        # Check if the king is in check/checkmate
         opponent_color = get_current_player_color(board)
         board.king_danger_spaces(opponent_color)
         
-        # Find opponent king and check if in checkmate
+        message = "Move successful"
+        
+        # Find opponent king and check if in check/checkmate
         for rank in range(8):
             for file in range(8):
                 piece = board.board_array[rank][file].piece
@@ -200,12 +196,17 @@ def make_move(move: MoveRequest):
                         board.game_over = True
                         message = f"Checkmate! {current_player_color.capitalize()} wins!"
                     elif piece.check:
-                        message = f"Check! {captured_piece + ' captured. ' if captured_piece else ''}"
+                        message = f"Check!"
+                        if captured_piece:
+                            message += f" {captured_piece} captured."
                     else:
-                        message = captured_piece + " captured" if captured_piece else "Move successful"
+                        if captured_piece:
+                            message = f"{captured_piece} captured"
                     break
         else:
-            message = captured_piece + " captured" if captured_piece else "Move successful"
+            # If no king found (shouldn't happen in normal game)
+            if captured_piece:
+                message = f"{captured_piece} captured"
         
         return {
             "success": True,
