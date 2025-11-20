@@ -15,16 +15,13 @@ import blackBishop from "../assets/pieces-png/bb.svg";
 import blackKnight from "../assets/pieces-png/nb.svg";
 import blackPawn from "../assets/pieces-png/pb.svg";
 
-
-import pawn_powered from "../assets/pieces-png/pawn_static.gif";
-import pawn_attack from "../assets/pieces-png/pawn_attack.gif";
-
 import red_circle from "../assets/red_circle.png"
 import powerup from "../assets/pieces-png/powerup.gif"
 
 import slashGif from "../assets/pieces-png/jinn_duel.gif";
 
 import ssj from "../assets/pieces-png/ssj.gif";
+import flame from "../assets/pieces-png/flame.gif";
 
 
 
@@ -204,7 +201,7 @@ export default function CustomBoard() {
           <img src={slashGif} alt="Kill Animation" />
         </div>
       )}
-      
+      <div className="board-frame">
       <div className="board">
         {ranks.map((rank) => (
           <div key={rank} className="rank">
@@ -236,12 +233,20 @@ export default function CustomBoard() {
                   )}
 
                   {pieceData && pieceData.type !== "powerup" && pieceData.has_powerup && (
-                    <img 
-                      src={pawn_powered} 
-                      alt={`${pieceData.color} ${pieceData.type}`}
-                      className="piece powered-pawn-gif" 
-                    />
+                    <div className="piece-wrapper">
+                      <img 
+                        src={getPieceImage(pieceData)}
+                        alt={`${pieceData.color} ${pieceData.type}`}
+                        className="piece"
+                      />
+                      <img 
+                        src={flame}
+                        alt="Super Saiyan Power"
+                        className="ssj-overlay"
+                      />
+                    </div>
                   )}
+
 
                   {pieceData?.type === "powerup" && (
                     <img 
@@ -264,6 +269,7 @@ export default function CustomBoard() {
           </div>
         ))}
       </div>
+    </div>
     </div>
     </div>
   );

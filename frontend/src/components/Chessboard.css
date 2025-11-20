@@ -1,9 +1,14 @@
+body {
+  background: #1f1d27;
+}
+
 .board {
   display: flex;
   flex-direction: column;
   border: 4px solid black;
   width: 960px;
   height: 960px;
+  margin: 0 auto;
 }
 
 .rank {
@@ -25,6 +30,8 @@
   height: 90%;
   object-fit: contain;
   pointer-events: none;
+  position: relative;
+  z-index: 2;
 }
 
 .powerup-spin {
@@ -66,3 +73,34 @@
   height: auto;
   image-rendering: pixelated;
 }
+
+.piece-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.ssj-overlay {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150%;
+  height: 130%;
+  z-index: 1; /* BELOW the piece */
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+.board-frame {
+  padding: 20px; /* thickness of border */
+  background: repeating-linear-gradient(
+  45deg,
+  #FFFFFF,
+  #FFFFFF 12px,
+  #000000 12px,
+  #000000 24px
+  );
+  display: inline-block;
+}
+
