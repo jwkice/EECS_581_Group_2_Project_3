@@ -1,20 +1,32 @@
 import React, { useState, useEffect } from "react";
 import "./Chessboard.css";
-//white pieces
-import whiteKing from "../assets/pieces-png/white-king.png";
-import whiteQueen from "../assets/pieces-png/white-queen.png";
-import whiteRook from "../assets/pieces-png/white-rook.png";
-import whiteBishop from "../assets/pieces-png/white-bishop.png";
-import whiteKnight from "../assets/pieces-png/white-knight.png";
-import whitePawn from "../assets/pieces-png/white-pawn.png";
-//black pieces
-import blackKing from "../assets/pieces-png/black-king.png";
-import blackQueen from "../assets/pieces-png/black-queen.png";
-import blackRook from "../assets/pieces-png/black-rook.png";
-import blackBishop from "../assets/pieces-png/black-bishop.png";
-import blackKnight from "../assets/pieces-png/black-knight.png";
-import blackPawn from "../assets/pieces-png/black-pawn.png";
+
+import whiteKing from "../assets/pieces-png/kw.svg";
+import whiteQueen from "../assets/pieces-png/qw.svg";
+import whiteRook from "../assets/pieces-png/rw.svg";
+import whiteBishop from "../assets/pieces-png/bw.svg";
+import whiteKnight from "../assets/pieces-png/nw.svg";
+import whitePawn from "../assets/pieces-png/pw.svg";
+
+import blackKing from "../assets/pieces-png/kb.svg";
+import blackQueen from "../assets/pieces-png/qb.svg";
+import blackRook from "../assets/pieces-png/rb.svg";
+import blackBishop from "../assets/pieces-png/bb.svg";
+import blackKnight from "../assets/pieces-png/nb.svg";
+import blackPawn from "../assets/pieces-png/pb.svg";
+
+
+import pawn_powered from "../assets/pieces-png/pawn_static.gif";
+import pawn_attack from "../assets/pieces-png/pawn_attack.gif";
+
 import red_circle from "../assets/red_circle.png"
+import powerup from "../assets/pieces-png/powerup.gif"
+
+import slashGif from "../assets/pieces-png/jinn_duel.gif";
+
+import ssj from "../assets/pieces-png/ssj.gif";
+
+
 
 const API_URL = "http://localhost:8000";
 
@@ -34,7 +46,7 @@ const pieceImages = {
     bishop: blackBishop,
     knight: blackKnight,
     pawn: blackPawn,
-  }
+  },
 };
 
 export default function CustomBoard() {
@@ -45,6 +57,9 @@ export default function CustomBoard() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [validMoves, setValidMoves] = useState([]);
+  const [showKillBanner, setShowKillBanner] = useState(false);
+
+
   
   const files = "abcdefgh";
   const ranks = [8,7,6,5,4,3,2,1];
@@ -123,9 +138,24 @@ export default function CustomBoard() {
         if (data.success) {
           setBoardState(data.board_state);
           setCurrentTurn(data.current_turn);
-          setValidMoves([]);
+
+          if (data.captured_piece && data.captured_piece !== "green? whatever it doesnt really matter PowerUp") {
+            setShowKillBanner(true);
+
+            setTimeout(() => {
+                setShowKillBanner(false);
+            }, 1600);
+        }
+
           setMessage(data.message || "Move successful");
-        } else {
+        
+
+          setValidMoves([]);
+          console.log(data);
+
+        }
+        
+        else {
           setMessage(data.message || "Invalid move");
         }
       } catch (error) {
@@ -143,7 +173,7 @@ export default function CustomBoard() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
+    <div className="page-container">
       <div style={{ marginBottom: "20px", textAlign: "center" }}>
         <h2>Chess Game</h2>
         <p>Turn: {currentTurn === 1 ? "White" : "Black"}</p>
@@ -167,13 +197,21 @@ export default function CustomBoard() {
         </button>
       </div>
 
+      <div className="board-wrapper">
+  
+      {showKillBanner && (
+        <div className="kill-banner">
+          <img src={slashGif} alt="Kill Animation" />
+        </div>
+      )}
+      
       <div className="board">
         {ranks.map((rank) => (
           <div key={rank} className="rank">
             {files.split("").map((file, fileIdx) => {
               const square = `${file}${rank}`;
               const isDark = (fileIdx + rank) % 2 === 1;
-              const color = isDark ? "#ABE7B2" : "#ECF4E8";
+              const color = isDark ? "#8CA9FF" : "#8CE4FF";
               const isSelected = selected === square;
               const pieceData = boardState[square];
               const isValidMove = validMoves.includes(square);
@@ -189,13 +227,30 @@ export default function CustomBoard() {
                   }}
                   onClick={() => handleGridClick(square)}
                 >
-                  {pieceData && (
+                  {pieceData && pieceData.type !== "powerup" && !pieceData.has_powerup && (
                     <img 
                       src={getPieceImage(pieceData)} 
                       alt={`${pieceData.color} ${pieceData.type}`}
                       className="piece" 
                     />
                   )}
+
+                  {pieceData && pieceData.type !== "powerup" && pieceData.has_powerup && (
+                    <img 
+                      src={pawn_powered} 
+                      alt={`${pieceData.color} ${pieceData.type}`}
+                      className="piece powered-pawn-gif" 
+                    />
+                  )}
+
+                  {pieceData?.type === "powerup" && (
+                    <img 
+                        src={powerup}
+                        alt="Powerup"
+                        className="powerup-spin"
+                    />
+                  )}
+
                   {isValidMove && (
                     <img
                       src={red_circle}
@@ -209,6 +264,7 @@ export default function CustomBoard() {
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 }

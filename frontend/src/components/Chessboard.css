@@ -26,3 +26,43 @@
   object-fit: contain;
   pointer-events: none;
 }
+
+.powerup-spin {
+    width: 100px;
+    height: 100px;
+}
+
+.powered-pawn-gif {
+  position: relative;
+  z-index: 3;
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  pointer-events: none;    
+  image-rendering: pixelated; 
+}
+
+.board-wrapper {
+  position: relative;  
+  width: 960px;           
+  height: 960px;
+  margin: 0 auto;
+}
+
+.kill-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 1600px;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 1;
+}
+
+.kill-banner img {
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+}
