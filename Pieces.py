@@ -143,7 +143,8 @@ class Queen(Piece):
         else:
             self.character = 'Q'
 
-    def _valid_moves(self, board):
+    def valid_moves(self, board):
+        powerup = self.has_powerup
         valid_array=[]
         directions_array = [(-1,-1), (-1,1), (1,1), (1, -1), (-1,0), (1,0), (0,-1), (0, 1)]
         for rank_offset, file_offset in directions_array:
@@ -155,6 +156,8 @@ class Queen(Piece):
                     valid_array.append((temp_rank, temp_file))
                     if self.has_powerup:
                         #If piece has powerup, mark target square as a movement option, continue along the movement path
+                        temp_rank += rank_offset
+                        temp_file += file_offset
                         continue
                     else:
                         #Piece does not have powerup, mark target square as a movement option, terminate movement path
@@ -162,8 +165,10 @@ class Queen(Piece):
                 
                 # if there is a piece of same color
                 elif board.board_array[temp_rank][temp_file].piece is not None:
-                    if self.has_powerup:
+                    if powerup:
                         #If piece has powerup, continue along the movement path
+                        temp_rank += rank_offset
+                        temp_file += file_offset
                         continue
                     else:
                         #Piece does not have powerup, terminate movement path
@@ -174,9 +179,6 @@ class Queen(Piece):
                 temp_file += file_offset
 
         return valid_array
-    
-    def valid_moves(self, board):
-        return self._valid_moves(board)
 
 
 class Knight(Piece):

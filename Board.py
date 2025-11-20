@@ -280,6 +280,7 @@ class Board():
                         '''
                 
                 current_piece.has_powerup = False
+            current_piece.has_powerup = False
 
             
             self.board_array[self.selected[0]][self.selected[1]].piece = None # set previous location to none
