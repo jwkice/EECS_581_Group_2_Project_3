@@ -305,33 +305,33 @@ class Pawn(Piece):
         valid_array = []
         if self.color == 'white':
             
-            if (self._in_bounds(self.rank - 1, self.file)) and board.board_array[self.rank - 1][self.file].piece is None:
+            if (self._in_bounds(self.rank - 1, self.file)) and (board.board_array[self.rank - 1][self.file].piece is None or board.board_array[self.rank - 1][self.file].piece.color == 'green'):
                 valid_array.append((self.rank - 1, self.file))
 
-            if (self._in_bounds(self.rank - 2, self.file)) and board.board_array[self.rank - 1][self.file].piece is None and board.board_array[self.rank - 2][self.file].piece is None and not self.has_moved:
+            if (self._in_bounds(self.rank - 2, self.file)) and (board.board_array[self.rank - 1][self.file].piece is None or board.board_array[self.rank - 1][self.file].piece.color == 'green') and (board.board_array[self.rank - 2][self.file].piece is None or board.board_array[self.rank - 2][self.file].piece.color == 'green') and not self.has_moved:
                 valid_array.append((self.rank - 2, self.file))
             
-            if (self._in_bounds(self.rank - 1, self.file + 1)) and board.board_array[self.rank - 1][self.file + 1].piece is not None:
+            if (self._in_bounds(self.rank - 1, self.file + 1)) and (board.board_array[self.rank - 1][self.file + 1].piece is not None and board.board_array[self.rank - 1][self.file + 1].piece.color != 'green'):
                 if self.color is not board.board_array[self.rank - 1][self.file + 1].piece.color:
                     valid_array.append((self.rank - 1, self.file + 1))
             
-            if (self._in_bounds(self.rank - 1, self.file - 1)) and board.board_array[self.rank - 1][self.file - 1].piece is not None:
+            if (self._in_bounds(self.rank - 1, self.file - 1)) and (board.board_array[self.rank - 1][self.file - 1].piece is not None and board.board_array[self.rank - 1][self.file - 1].piece.color != 'green'):
                 if self.color is not board.board_array[self.rank - 1][self.file - 1].piece.color:
                     valid_array.append((self.rank - 1, self.file - 1))
         
 
         elif self.color == 'black':
-            if (self._in_bounds(self.rank + 1, self.file)) and board.board_array[self.rank + 1][self.file].piece is None:
+            if (self._in_bounds(self.rank + 1, self.file)) and (board.board_array[self.rank + 1][self.file].piece is None or board.board_array[self.rank + 1][self.file].piece.color == 'green'):
                 valid_array.append((self.rank + 1, self.file))
 
-            if (self._in_bounds(self.rank + 2, self.file)) and board.board_array[self.rank + 1][self.file].piece is None and board.board_array[self.rank + 2][self.file].piece is None and not self.has_moved:
+            if (self._in_bounds(self.rank + 2, self.file)) and (board.board_array[self.rank + 1][self.file].piece is None or board.board_array[self.rank + 1][self.file].piece.color == 'green') and (board.board_array[self.rank + 2][self.file].piece is None or board.board_array[self.rank + 2][self.file].piece.color == 'green') and not self.has_moved:
                 valid_array.append((self.rank + 2, self.file))
             
-            if (self._in_bounds(self.rank + 1, self.file + 1)) and board.board_array[self.rank + 1][self.file + 1].piece is not None:
+            if (self._in_bounds(self.rank + 1, self.file + 1)) and (board.board_array[self.rank + 1][self.file + 1].piece is not None and board.board_array[self.rank + 1][self.file + 1].piece.color != 'green'):
                 if self.color is not board.board_array[self.rank + 1][self.file + 1].piece.color:
                     valid_array.append((self.rank + 1, self.file + 1))
             
-            if (self._in_bounds(self.rank + 1, self.file - 1)) and board.board_array[self.rank + 1][self.file - 1].piece is not None:
+            if (self._in_bounds(self.rank + 1, self.file - 1)) and (board.board_array[self.rank + 1][self.file - 1].piece is not None and board.board_array[self.rank + 1][self.file - 1].piece.color != 'green'):
                 if self.color is not board.board_array[self.rank + 1][self.file - 1].piece.color:
                     valid_array.append((self.rank + 1, self.file - 1))
 
@@ -345,7 +345,7 @@ class PowerUp(Piece):
     def __init__(self, color, rank, file):
         super().__init__(color, rank, file)
         self.character = 'A'
-        self.color = 'green? whatever it doesnt really matter'
+        self.color = 'green'
         self.has_powerup = True
 
     def valid_moves(self, board):
