@@ -165,7 +165,10 @@ class Board():
             Purpose:
                 initializes a new piece of the indicated type, assigns it to the given square on the board
         '''
-        color = player.color
+        if type(player) is str:
+            color = player
+        else:
+            color = player.color
         if self.board_array[rank][file].piece is None:
             if piece_type == 'pawn':
                 new_piece = Pieces.Pawn(color, rank, file)
@@ -185,7 +188,8 @@ class Board():
                 raise(RuntimeError(f'Invalid Piece Type: {piece_type}'))
             
             self.board_array[rank][file].piece = new_piece
-            player.pieces.append(new_piece)
+            #player.pieces.append(new_piece)
+            return new_piece
         else:
             raise(RuntimeError(f'Square ({rank}, {file}) already has a piece'))
     
@@ -217,6 +221,22 @@ class Board():
                 self.move(rank, file)
                 self.selected = None
                 self.selected_moves = None
+
+    def transform_pawn(self, piece):
+        chance = rng.random()
+        if chance > 0.9:
+            #10% chance of becoming a queen
+            new_type = 'queen'
+        elif chance > 0.6:
+            new_type = 'rook'
+        elif chance > 0.3:
+            new_type = 'bishop'
+        else:
+            new_type = 'knight'
+
+        self.board_array[piece.rank][piece.file].piece = None
+
+        return self.add_piece(piece.color, new_type, piece.rank, piece.file)
 
     def move(self, rank, file):
         '''
@@ -287,7 +307,11 @@ class Board():
 
             # power up transfer
             if self.board_array[rank][file].piece is not None and self.board_array[rank][file].piece.has_powerup:
-                current_piece.has_powerup = True
+                if current_piece.character.lower() == 'p':
+                    #Call transform_pawn
+                    current_piece = self.transform_pawn(current_piece)
+                else:
+                    current_piece.has_powerup = True
 
             # overwrite piece at destination
             self.board_array[rank][file].piece = current_piece
