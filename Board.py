@@ -317,6 +317,8 @@ class Board():
                     if current_piece.character.lower() == 'p':
                         #Call transform_pawn
                         current_piece = self.transform_pawn(current_piece)
+                    elif current_piece.character.lower() == 'k':
+                        current_piece.lives_remaining += 1
                     else:
                         current_piece.has_powerup = True
 
@@ -334,7 +336,7 @@ class Board():
                     self.board_array[rank][file].piece = current_piece # capture if none remain
                     self.board_array[self.selected[0]][self.selected[1]].piece = None # set previous location to none
 
-            current_piece.has_powerup = False
+                current_piece.has_powerup = False
             
 
         
