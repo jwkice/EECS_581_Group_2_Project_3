@@ -129,7 +129,9 @@ class Board():
                     for i in valid_moves:
                         self.board_array[rank][file].atk_by = True
                             
-                    
+
+    def end_game(self):
+        pass
         
     
 
@@ -335,6 +337,8 @@ class Board():
                 else:
                     self.board_array[rank][file].piece = current_piece # capture if none remain
                     self.board_array[self.selected[0]][self.selected[1]].piece = None # set previous location to none
+                    self.end_game()
+
 
                 current_piece.has_powerup = False
             
