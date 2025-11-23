@@ -77,6 +77,10 @@ def serialize_board(board: Board) -> Dict[str, Optional[Dict]]:
                     "has_powerup": square.piece.has_powerup,
                     "character": square.piece.character
                 }
+
+                if piece_type == "king":
+                    board_state[position]["lives_remaining"] = square.piece.lives_remaining
+
             else:
                 board_state[position] = None
     return board_state

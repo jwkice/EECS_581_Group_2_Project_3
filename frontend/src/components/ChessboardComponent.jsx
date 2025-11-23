@@ -20,8 +20,9 @@ import powerup from "../assets/pieces-png/powerup.gif"
 
 import slashGif from "../assets/pieces-png/jinn_duel.gif";
 
-import ssj from "../assets/pieces-png/ssj.gif";
 import flame from "../assets/pieces-png/flame.gif";
+
+import heart from "../assets/pieces-png/heart.png"
 
 
 
@@ -55,6 +56,9 @@ export default function CustomBoard() {
   const [loading, setLoading] = useState(false);
   const [validMoves, setValidMoves] = useState([]);
   const [showKillBanner, setShowKillBanner] = useState(false);
+  const [whiteLives, setWhiteLives] = useState(1);
+  const [blackLives, setBlackLives] = useState(1);
+
 
 
   
@@ -75,14 +79,30 @@ export default function CustomBoard() {
       const data = await response.json();
       setGameId(data.game_id);
       setBoardState(data.board_state);
+
+      let wLives = 0;
+          let bLives = 0;
+
+          Object.values(data.board_state).forEach(square => {
+              if (!square) return;
+
+              if (square.type === "king") {
+                  if (square.color === "white") wLives = square.lives_remaining;
+                  if (square.color === "black") bLives = square.lives_remaining;
+              }
+          });
+
+          setWhiteLives(wLives);
+          setBlackLives(bLives);
+
       setCurrentTurn(data.current_turn);
       setMessage("New game started!");
     } catch (error) {
       console.error("Error creating game:", error);
       setMessage("Failed to create game");
-    }
-    setLoading(false);
-  };
+      }
+      setLoading(false);
+    };
 
   const handleGridClick = async (square) => {
     if (loading || !gameId) return;
@@ -132,8 +152,26 @@ export default function CustomBoard() {
         
         const data = await response.json();
 
+        console.log(data);
+
         if (data.success) {
           setBoardState(data.board_state);
+
+          let wLives = 0;
+          let bLives = 0;
+
+          Object.values(data.board_state).forEach(square => {
+              if (!square) return;
+
+              if (square.type === "king") {
+                  if (square.color === "white") wLives = square.lives_remaining;
+                  if (square.color === "black") bLives = square.lives_remaining;
+              }
+          });
+
+          setWhiteLives(wLives);
+          setBlackLives(bLives);
+
           setCurrentTurn(data.current_turn);
 
           if (data.captured_piece && data.captured_piece !== "green? whatever it doesnt really matter PowerUp") {
@@ -192,6 +230,22 @@ export default function CustomBoard() {
         >
           New Game
         </button>
+      </div>
+
+      <div className="lives-header">
+        <div className="lives-left">
+          <span className="lives-label">White Lives: </span>
+          {[...Array(whiteLives)].map((_, i) => (
+            <img key={i} src={heart} className="heart-icon" />
+          ))}
+        </div>
+
+        <div className="lives-right">
+          <span className="lives-label">Black Lives: </span>
+          {[...Array(blackLives)].map((_, i) => (
+            <img key={i} src={heart} className="heart-icon" />
+          ))}
+        </div>
       </div>
 
       <div className="board-wrapper">
