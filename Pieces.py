@@ -100,6 +100,7 @@ class King(Piece):
         self.has_moved = False
         self.check = False
         self.checkmate = False
+        self.lives_remaining = 3
 
     def valid_moves(self, board):
         valid_array = []

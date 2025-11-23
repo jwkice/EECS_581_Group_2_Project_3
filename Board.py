@@ -255,70 +255,87 @@ class Board():
         current_piece = self.board_array[self.selected[0]][self.selected[1]].piece # select piece to be moved
         if current_piece.character.lower() == 'b' and current_piece.has_powerup: # if the current piece is a powered up bishop
             # check if target is a piece of opposite color and is not a king
-            if self.board_array[rank][file].piece is not None and self.board_array[rank][file].piece.color is not current_piece.color and self.board_array[rank][file].piece.character.lower() != 'k':                
-                if current_piece.color == 'white':
-                    self.board_array[rank][file].piece.color = 'white'
-                    self.board_array[rank][file].piece.character = self.board_array[rank][file].piece.character.lower()
-                    bishop_conversion = True
-                    current_piece.has_powerup = False
+            if self.board_array[rank][file].piece is not None and self.board_array[rank][file].piece.color is not current_piece.color:  
+                if self.board_array[rank][file].piece.character.lower() == 'k':
+                    self.board_array[rank][file].piece.lives_left -= 1
+                else:
+                    if current_piece.color == 'white':
+                        self.board_array[rank][file].piece.color = 'white'
+                        self.board_array[rank][file].piece.character = self.board_array[rank][file].piece.character.lower()
+                        bishop_conversion = True
+                        current_piece.has_powerup = False
 
-                elif current_piece.color == 'black':
-                    self.board_array[rank][file].piece.color = 'black'
-                    self.board_array[rank][file].piece.character = self.board_array[rank][file].piece.character.capitalize()
-                    bishop_conversion = True
-                    current_piece.has_powerup = False
+                    elif current_piece.color == 'black':
+                        self.board_array[rank][file].piece.color = 'black'
+                        self.board_array[rank][file].piece.character = self.board_array[rank][file].piece.character.capitalize()
+                        bishop_conversion = True
+                        current_piece.has_powerup = False
 
 
         if not bishop_conversion:
-            current_piece.rank, current_piece.file = rank, file # set current piece's location to new rank and file
+            if self.board_array[rank][file].piece is None or self.board_array[rank][file].piece.character.lower() != 'k':
+                current_piece.rank, current_piece.file = rank, file # set current piece's location to new rank and file
 
-            # knight power up handling
-            if current_piece.character.lower() == 'n' and current_piece.has_powerup:
-                move_tuple = (self.selected[0] - rank, self.selected[1] - file)
-                if move_tuple not in [(-1,2), (1,2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2,1)]:
+                # knight power up handling
+                if current_piece.character.lower() == 'n' and current_piece.has_powerup:
+                    move_tuple = (self.selected[0] - rank, self.selected[1] - file)
+                    if move_tuple not in [(-1,2), (1,2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2,1)]:
+                        current_piece.has_powerup = False
+
+
+
+                # rook power up handling
+                if current_piece.character.lower() == 'r' and current_piece.has_powerup and self.board_array[rank][file].piece is not None:
+                    explosion_targets = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+                    for target in explosion_targets:
+                        target_rank, target_file = target
+                        target_rank = target_rank + rank
+                        target_file = target_file + file
+                        # if target is in bounds and the square has a piece
+                        if (target_rank >= 0 and target_rank < 8) and (target_file >= 0 and target_file < 8) and self.board_array[target_rank][target_file].piece is not None:
+                            print(f"hit at {target_rank} {target_file}")
+                            if self.board_array[target_rank][target_file].piece.character.lower() != 'k':
+                                self.board_array[target_rank][target_file].piece = None
+                            else:
+                                self.board_array[target_rank][target_file].piece.lives_remaining -= 1
+
+                            '''
+                            # caution
+                            # if uncommented, the rook will get power ups from pieces that it explodes, leading to irreversible damage to the game state
+                            if self.board_array[target_rank][target_file].piece is not None and self.board_array[target_rank][target_file].piece.has_powerup:
+                                current_piece.has_powerup = True
+                            '''
+                    
                     current_piece.has_powerup = False
-
-
-
-            # rook power up handling
-            if current_piece.character.lower() == 'r' and current_piece.has_powerup and self.board_array[rank][file].piece is not None:
-                explosion_targets = [(1, 0), (0, 1), (-1, 0), (0, -1)]
-                for target in explosion_targets:
-                    target_rank, target_file = target
-                    target_rank = target_rank + rank
-                    target_file = target_file + file
-                    # if target is in bounds and the square has a piece
-                    if (target_rank >= 0 and target_rank < 8) and (target_file >= 0 and target_file < 8) and self.board_array[target_rank][target_file].piece is not None:
-                        print(f"hit at {target_rank} {target_file}")
-                        self.board_array[target_rank][target_file].piece = None
-
-                        '''
-                        # caution
-                        # if uncommented, the rook will get power ups from pieces that it explodes, leading to irreversible damage to the game state
-                        if self.board_array[target_rank][target_file].piece is not None and self.board_array[target_rank][target_file].piece.has_powerup:
-                            current_piece.has_powerup = True
-                        '''
-                
                 current_piece.has_powerup = False
-            current_piece.has_powerup = False
 
-            
-            self.board_array[self.selected[0]][self.selected[1]].piece = None # set previous location to none
+                
+                self.board_array[self.selected[0]][self.selected[1]].piece = None # set previous location to none
 
-            # power up transfer
-            if self.board_array[rank][file].piece is not None and self.board_array[rank][file].piece.has_powerup:
-                if current_piece.character.lower() == 'p':
-                    #Call transform_pawn
-                    current_piece = self.transform_pawn(current_piece)
+                # power up transfer
+                if self.board_array[rank][file].piece is not None and self.board_array[rank][file].piece.has_powerup:
+                    if current_piece.character.lower() == 'p':
+                        #Call transform_pawn
+                        current_piece = self.transform_pawn(current_piece)
+                    else:
+                        current_piece.has_powerup = True
+
+                # overwrite piece at destination
+                self.board_array[rank][file].piece = current_piece
+
+                # update has_moved for pawn and king
+                if current_piece.character.lower() == "k" or current_piece.character.lower() == "p":
+                    current_piece.has_moved = True
+
+            else: # the captured piece is a king
+                if self.board_array[rank][file].piece.lives_remaining > 1:
+                    self.board_array[rank][file].piece.lives_remaining -= 1 # reduce lives by 1 if any remain
                 else:
-                    current_piece.has_powerup = True
+                    self.board_array[rank][file].piece = current_piece # capture if none remain
+                    self.board_array[self.selected[0]][self.selected[1]].piece = None # set previous location to none
 
-            # overwrite piece at destination
-            self.board_array[rank][file].piece = current_piece
-
-            # update has_moved for pawn and king
-            if current_piece.character.lower() == "k" or current_piece.character.lower() == "p":
-                current_piece.has_moved = True
+            current_piece.has_powerup = False
+            
 
         
 
