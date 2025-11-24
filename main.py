@@ -132,6 +132,16 @@ def make_move(move: MoveRequest):
     
     board = games[move.game_id]
     
+    # Add game over check
+    if board.game_over:
+        return {
+            "success": False,
+            "board_state": serialize_board(board),
+            "current_turn": board.players_turn,
+            "game_over": True,
+            "message": "Game is already over"
+        }
+    
     try:
         from_rank, from_file = position_to_indices(move.from_square)
         to_rank, to_file = position_to_indices(move.to_square)
@@ -160,6 +170,9 @@ def make_move(move: MoveRequest):
                 "message": f"Not your turn. It's {current_player_color}'s turn"
             }
         
+        # Update king danger spaces BEFORE getting valid moves
+        board.king_danger_spaces(current_player_color)
+        
         valid_moves = from_square.piece.valid_moves(board)
         
         # Check if the destination is valid move
@@ -172,24 +185,70 @@ def make_move(move: MoveRequest):
                 "message": "Invalid move for this piece"
             }
         
+        # Store king lives before the move
+        king_lives_before = {}
+        for rank in range(8):
+            for file in range(8):
+                piece = board.board_array[rank][file].piece
+                if piece and isinstance(piece, Pieces.King):
+                    king_lives_before[piece.color] = piece.lives_remaining
+        
         # Check for capture
         captured_piece = None
         if to_square.piece is not None:
-            captured_piece = f"{to_square.piece.color} {type(to_square.piece).__name__}"
+            piece_type = type(to_square.piece).__name__
+            if piece_type == "PowerUp":
+                captured_piece = "PowerUp"
+            else:
+                captured_piece = f"{to_square.piece.color} {piece_type}"
         
         # Set board's selected position for move() method
         board.selected = (from_rank, from_file)
         
         board.move(to_rank, to_file)
         
+        # Check king lives after the move
+        king_lives_after = {}
+        king_eliminated = None
+        for rank in range(8):
+            for file in range(8):
+                piece = board.board_array[rank][file].piece
+                if piece and isinstance(piece, Pieces.King):
+                    king_lives_after[piece.color] = piece.lives_remaining
+                    if piece.lives_remaining <= 0:
+                        king_eliminated = piece.color
+        
+        if king_eliminated:
+            board.game_over = True
+            winner = "White" if king_eliminated == "black" else "Black"
+            message = f"Game Over! {winner} wins! {king_eliminated.capitalize()} king eliminated."
+            
+            return {
+                "success": True,
+                "board_state": serialize_board(board),
+                "current_turn": board.players_turn,
+                "game_over": True,
+                "message": message,
+                "captured_piece": captured_piece
+            }
+        
         # Switch turns
         board.players_turn = 2 if board.players_turn == 1 else 1
         
-        # Check if the king is in check/checkmate
+        # Check if the king is in check/checkmate for NEW current player
         opponent_color = get_current_player_color(board)
         board.king_danger_spaces(opponent_color)
         
         message = "Move successful"
+        king_life_lost = False
+        
+        # Check if any king lost a life
+        for color in king_lives_before:
+            if color in king_lives_after:
+                if king_lives_after[color] < king_lives_before[color]:
+                    king_life_lost = True
+                    lives_lost = king_lives_before[color] - king_lives_after[color]
+                    message = f"{color.capitalize()} king lost {lives_lost} life! ({king_lives_after[color]} remaining)"
         
         # Find opponent king and check if in check/checkmate
         for rank in range(8):
@@ -198,19 +257,30 @@ def make_move(move: MoveRequest):
                 if piece and isinstance(piece, Pieces.King) and piece.color == opponent_color:
                     if piece.checkmate:
                         board.game_over = True
-                        message = f"Checkmate! {current_player_color.capitalize()} wins!"
+                        # Use the previous player (who just moved) as winner
+                        winner = "White" if opponent_color == "black" else "Black"
+                        message = f"Checkmate! {winner} wins!"
                     elif piece.check:
-                        message = f"Check!"
-                        if captured_piece:
+                        if king_life_lost:
+                            message += " - Check!"
+                        else:
+                            message = "Check!"
+                        if captured_piece and "PowerUp" not in captured_piece:
                             message += f" {captured_piece} captured."
                     else:
-                        if captured_piece:
-                            message = f"{captured_piece} captured"
+                        if not king_life_lost:
+                            if captured_piece and "PowerUp" not in captured_piece:
+                                message = f"{captured_piece} captured"
+                            elif captured_piece and "PowerUp" in captured_piece:
+                                message = "Power-up collected!"
                     break
         else:
-            # If no king found (shouldn't happen in normal game)
-            if captured_piece:
-                message = f"{captured_piece} captured"
+            # If no king found or loop completes without break
+            if not king_life_lost:
+                if captured_piece and "PowerUp" not in captured_piece:
+                    message = f"{captured_piece} captured"
+                elif captured_piece and "PowerUp" in captured_piece:
+                    message = "Power-up collected!"
         
         return {
             "success": True,
