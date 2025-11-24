@@ -59,7 +59,7 @@ class Board():
         self.selected_moves = None
         self.total_turns = 0
         self.powerup_delay_turns = 2
-        self.powerup_chance = .75
+        self.powerup_chance = .25
         self._initialize()
         
 
@@ -77,13 +77,13 @@ class Board():
         self.player_one = Player('white')
         self.player_one.turn = True
         self.player_two = Player('black')
-        '''
+        
         for i in range(16): #Place pawns
             if i < 8:   #Place white pawns
                 self.add_piece(self.player_one, 'pawn', 6, i)
             else:   #Place black pawns
                 self.add_piece(self.player_two, 'pawn', 1, i-8)
-        '''
+        
         #Place rooks
         self.add_piece(self.player_one, 'rook', 7, 0)
         self.add_piece(self.player_one, 'rook', 7, 7)
@@ -261,7 +261,7 @@ class Board():
                 if self.board_array[rank][file].piece.character.lower() == 'k':
                     self.board_array[rank][file].piece.lives_left -= 1
 
-                elif self.board_array[rank][file].piece.color is 'green':
+                elif self.board_array[rank][file].piece.color == 'green':
                     pass
 
                 else:

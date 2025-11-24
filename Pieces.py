@@ -155,7 +155,7 @@ class Queen(Piece):
                 if board.board_array[temp_rank][temp_file].piece is not None and board.board_array[temp_rank][temp_file].piece.color is not self.color:
                     #There is an opposition piece
                     valid_array.append((temp_rank, temp_file))
-                    if self.has_powerup or board.board_array[temp_rank][temp_file].piece.color is 'green':
+                    if self.has_powerup or board.board_array[temp_rank][temp_file].piece.color == 'green':
                         #If piece has powerup or target IS a power up, mark target square as a movement option, continue along the movement path
                         temp_rank += rank_offset
                         temp_file += file_offset
@@ -238,7 +238,7 @@ class Bishop(Piece):
                 # if there is a piece and that piece is not self.color
                 if board.board_array[temp_rank][temp_file].piece is not None and board.board_array[temp_rank][temp_file].piece.color is not self.color:
                     valid_array.append((temp_rank, temp_file))
-                    if board.board_array[temp_rank][temp_file].piece.color is not 'green':
+                    if board.board_array[temp_rank][temp_file].piece.color != 'green':
                         break
                 
                 # if there is a piece of same color
@@ -276,7 +276,7 @@ class Rook(Piece):
                 # if there is a piece and that piece is not self.color
                 if board.board_array[temp_rank][temp_file].piece is not None and board.board_array[temp_rank][temp_file].piece.color is not self.color:
                     valid_array.append((temp_rank, temp_file))
-                    if board.board_array[temp_rank][temp_file].piece.color is not 'green':
+                    if board.board_array[temp_rank][temp_file].piece.color != 'green':
                         break
                 
                 # if there is a piece of same color
