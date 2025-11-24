@@ -19,10 +19,15 @@ import red_circle from "../assets/red_circle.png"
 import powerup from "../assets/pieces-png/powerup.gif"
 
 import slashGif from "../assets/pieces-png/jinn_duel.gif";
+import slashGif2 from "../assets/pieces-png/vader_duel.gif";
+import defeatKing from "../assets/pieces-png/emporer_duel.gif"
 
 import flame from "../assets/pieces-png/flame.gif";
 
 import heart from "../assets/pieces-png/heart.png"
+
+import victory from "../assets/pieces-png/victory_chess.png"
+import defeat from "../assets/pieces-png/defeat_chess.png"
 
 
 
@@ -58,6 +63,7 @@ export default function CustomBoard() {
   const [showKillBanner, setShowKillBanner] = useState(false);
   const [whiteLives, setWhiteLives] = useState(1);
   const [blackLives, setBlackLives] = useState(1);
+  const [winner, setWinner] = useState(null); 
 
 
 
@@ -72,6 +78,7 @@ export default function CustomBoard() {
 
   const createNewGame = async () => {
     setLoading(true);
+    setWinner(null);
     try {
       const response = await fetch(`${API_URL}/api/game/new`, {
         method: "POST",
@@ -172,14 +179,23 @@ export default function CustomBoard() {
           setWhiteLives(wLives);
           setBlackLives(bLives);
 
+          if (!winner) {
+              if (wLives === 0) {
+                setWinner("black");
+              } 
+              else if (bLives === 0) {
+                setWinner("white");
+              }
+          }
+
           setCurrentTurn(data.current_turn);
 
-          if (data.captured_piece && data.captured_piece !== "green? whatever it doesnt really matter PowerUp") {
+          if (data.captured_piece && data.captured_piece !== "PowerUp") {
             setShowKillBanner(true);
 
             setTimeout(() => {
                 setShowKillBanner(false);
-            }, 1600);
+            }, 2500);
         }
 
           setMessage(data.message || "Move successful");
@@ -250,11 +266,44 @@ export default function CustomBoard() {
 
       <div className="board-wrapper">
   
-      {showKillBanner && (
+      {showKillBanner && !winner && (
         <div className="kill-banner">
-          <img src={slashGif} alt="Kill Animation" />
+          <img
+            src={Math.random() < 0.5 ? slashGif : slashGif2}
+            alt="Kill Animation"
+          />
         </div>
       )}
+
+      {showKillBanner && winner && (
+        <div className="kill-banner">
+          <img
+            src={defeatKing}
+            alt="Emperor Duel"
+          />
+        </div>
+      )}
+
+      {winner && (
+        <div className="win-overlay">
+
+          {/* TOP IMAGE (winner) */}
+          {winner === "black" ? (
+            <img src={victory} className="win-img-top" />
+          ) : (
+            <img src={defeat} className="win-img-top" />
+          )}
+
+          {/* BOTTOM IMAGE (loser) */}
+          {winner === "black" ? (
+            <img src={defeat} className="win-img-bottom" />
+          ) : (
+            <img src={victory} className="win-img-bottom" />
+          )}
+
+        </div>
+      )}
+
       <div className="board-frame">
       <div className="board">
         {ranks.map((rank) => (
