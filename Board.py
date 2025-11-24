@@ -77,13 +77,13 @@ class Board():
         self.player_one = Player('white')
         self.player_one.turn = True
         self.player_two = Player('black')
-
+        '''
         for i in range(16): #Place pawns
             if i < 8:   #Place white pawns
                 self.add_piece(self.player_one, 'pawn', 6, i)
             else:   #Place black pawns
                 self.add_piece(self.player_two, 'pawn', 1, i-8)
-
+        '''
         #Place rooks
         self.add_piece(self.player_one, 'rook', 7, 0)
         self.add_piece(self.player_one, 'rook', 7, 7)
@@ -260,6 +260,10 @@ class Board():
             if self.board_array[rank][file].piece is not None and self.board_array[rank][file].piece.color is not current_piece.color:  
                 if self.board_array[rank][file].piece.character.lower() == 'k':
                     self.board_array[rank][file].piece.lives_left -= 1
+
+                elif self.board_array[rank][file].piece.color is 'green':
+                    pass
+
                 else:
                     if current_piece.color == 'white':
                         self.board_array[rank][file].piece.color = 'white'
