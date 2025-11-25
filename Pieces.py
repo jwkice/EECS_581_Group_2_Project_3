@@ -115,7 +115,7 @@ class King(Piece):
 
                 if self._in_bounds(new_rank, new_file):
                     # valid move if enemy piece in range and not covered by enemy piece
-                    if board.board_array[new_rank][new_file].piece is not None and board.board_array[new_rank][new_file].piece.color is not self.color and not board.board_array[new_rank][new_file].atk_by:
+                    if board.board_array[new_rank][new_file].piece is not None and board.board_array[new_rank][new_file].piece.color is not self.color:# and not board.board_array[new_rank][new_file].atk_by:
                         valid_array.append((new_rank, new_file))
 
                     # valid move if no piece on square and is not being covered by enemy piece

@@ -59,7 +59,7 @@ class Board():
         self.selected_moves = None
         self.total_turns = 0
         self.powerup_delay_turns = 2
-        self.powerup_chance = .10
+        self.powerup_chance = .25
         self._initialize()
         
 
