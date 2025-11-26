@@ -328,6 +328,9 @@ class Board():
                     else:
                         current_piece.has_powerup = True
 
+                if current_piece.character.lower() == 'p' and (rank == 0 or rank == 7):
+                    current_piece = self.transform_pawn(current_piece)
+
                 # overwrite piece at destination
                 self.board_array[rank][file].piece = current_piece
 
