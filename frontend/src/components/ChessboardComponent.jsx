@@ -19,15 +19,10 @@ import red_circle from "../assets/red_circle.png"
 import powerup from "../assets/pieces-png/powerup.gif"
 
 import slashGif from "../assets/pieces-png/jinn_duel.gif";
-import slashGif2 from "../assets/pieces-png/vader_duel.gif";
-import defeatKing from "../assets/pieces-png/emporer_duel.gif"
 
 import flame from "../assets/pieces-png/flame.gif";
 
 import heart from "../assets/pieces-png/heart.png"
-
-import victory from "../assets/pieces-png/victory_chess.png"
-import defeat from "../assets/pieces-png/defeat_chess.png"
 
 
 
@@ -63,7 +58,6 @@ export default function CustomBoard() {
   const [showKillBanner, setShowKillBanner] = useState(false);
   const [whiteLives, setWhiteLives] = useState(1);
   const [blackLives, setBlackLives] = useState(1);
-  const [winner, setWinner] = useState(null); 
 
 
 
@@ -78,7 +72,6 @@ export default function CustomBoard() {
 
   const createNewGame = async () => {
     setLoading(true);
-    setWinner(null);
     try {
       const response = await fetch(`${API_URL}/api/game/new`, {
         method: "POST",
@@ -179,15 +172,6 @@ export default function CustomBoard() {
           setWhiteLives(wLives);
           setBlackLives(bLives);
 
-          if (!winner) {
-              if (wLives === 0) {
-                setWinner("black");
-              } 
-              else if (bLives === 0) {
-                setWinner("white");
-              }
-          }
-
           setCurrentTurn(data.current_turn);
 
           if (data.captured_piece && data.captured_piece !== "PowerUp") {
@@ -195,7 +179,7 @@ export default function CustomBoard() {
 
             setTimeout(() => {
                 setShowKillBanner(false);
-            }, 2500);
+            }, 1600);
         }
 
           setMessage(data.message || "Move successful");
@@ -224,156 +208,119 @@ export default function CustomBoard() {
   };
 
   return (
-    <div className="page-container">
-      <div style={{ marginBottom: "20px", textAlign: "center" }}>
-        <h2>Chess Game</h2>
-        <p>Turn: {currentTurn === 1 ? "White" : "Black"}</p>
-        <p style={{ color: message.includes("Failed") ? "red" : "green" }}>
-          {message}
-        </p>
-        <button 
-          onClick={createNewGame}
-          disabled={loading}
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            cursor: loading ? "not-allowed" : "pointer",
-            backgroundColor: "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-          }}
-        >
-          New Game
-        </button>
-      </div>
+  <div className="page-container">
 
-      <div className="lives-header">
-        <div className="lives-left">
-          <span className="lives-label">White Lives: </span>
+    <div className="side-panel">
+      <h2 className="pixelify-sans-title">Power Chess</h2>
+
+      <p className = "play-regular">Turn: {currentTurn === 1 ? "White" : "Black"}</p>
+
+      <p style={{ color: message.includes("Failed") ? "red" : "green" }}>
+        {message}
+      </p>
+
+      <button 
+        onClick={createNewGame}
+        disabled={loading}
+        className="newgame-btn"
+      >
+        New Game
+      </button>
+
+      <div className="lives-side">
+        <div className="lives-row">
+          <span className="lives-label play-hearts">White:</span>
           {[...Array(whiteLives)].map((_, i) => (
-            <img key={i} src={heart} className="heart-icon" />
+            <img key={i} src={heart} className="heart-icon"/>
           ))}
         </div>
 
-        <div className="lives-right">
-          <span className="lives-label">Black Lives: </span>
+        <div className="lives-row">
+          <span className="lives-label play-hearts">Black:</span>
           {[...Array(blackLives)].map((_, i) => (
             <img key={i} src={heart} className="heart-icon" />
           ))}
         </div>
       </div>
+    </div>
 
-      <div className="board-wrapper">
-  
-      {showKillBanner && !winner && (
+    <div className="board-wrapper">
+      {showKillBanner && (
         <div className="kill-banner">
-          <img
-            src={Math.random() < 0.5 ? slashGif : slashGif2}
-            alt="Kill Animation"
-          />
-        </div>
-      )}
-
-      {showKillBanner && winner && (
-        <div className="kill-banner">
-          <img
-            src={defeatKing}
-            alt="Emperor Duel"
-          />
-        </div>
-      )}
-
-      {winner && (
-        <div className="win-overlay">
-
-          {/* TOP IMAGE (winner) */}
-          {winner === "black" ? (
-            <img src={victory} className="win-img-top" />
-          ) : (
-            <img src={defeat} className="win-img-top" />
-          )}
-
-          {/* BOTTOM IMAGE (loser) */}
-          {winner === "black" ? (
-            <img src={defeat} className="win-img-bottom" />
-          ) : (
-            <img src={victory} className="win-img-bottom" />
-          )}
-
+          <img src={slashGif} alt="Kill Animation" />
         </div>
       )}
 
       <div className="board-frame">
-      <div className="board">
-        {ranks.map((rank) => (
-          <div key={rank} className="rank">
-            {files.split("").map((file, fileIdx) => {
-              const square = `${file}${rank}`;
-              const isDark = (fileIdx + rank) % 2 === 1;
-              const color = isDark ? "#8CA9FF" : "#8CE4FF";
-              const isSelected = selected === square;
-              const pieceData = boardState[square];
-              const isValidMove = validMoves.includes(square);
+        <div className="board">
+          {ranks.map((rank) => (
+            <div key={rank} className="rank">
+              {files.split("").map((file, fileIdx) => {
+                const square = `${file}${rank}`;
+                const isDark = (fileIdx + rank) % 2 === 1;
+                const color = isDark ? "#8CA9FF" : "#8CE4FF";
+                const isSelected = selected === square;
+                const pieceData = boardState[square];
+                const isValidMove = validMoves.includes(square);
 
-              return (
-                <div
-                  key={square}
-                  className="square"
-                  style={{
-                    backgroundColor: isSelected ? "#FFD700" : color,
-                    cursor: loading ? "not-allowed" : "pointer",
-                    opacity: loading ? 0.6 : 1,
-                  }}
-                  onClick={() => handleGridClick(square)}
-                >
-                  {pieceData && pieceData.type !== "powerup" && !pieceData.has_powerup && (
-                    <img 
-                      src={getPieceImage(pieceData)} 
-                      alt={`${pieceData.color} ${pieceData.type}`}
-                      className="piece" 
-                    />
-                  )}
-
-                  {pieceData && pieceData.type !== "powerup" && pieceData.has_powerup && (
-                    <div className="piece-wrapper">
+                return (
+                  <div
+                    key={square}
+                    className="square"
+                    style={{
+                      backgroundColor: isSelected ? "#FFD700" : color,
+                      cursor: loading ? "not-allowed" : "pointer",
+                      opacity: loading ? 0.6 : 1,
+                    }}
+                    onClick={() => handleGridClick(square)}
+                  >
+                    {pieceData && pieceData.type !== "powerup" && !pieceData.has_powerup && (
                       <img 
-                        src={getPieceImage(pieceData)}
+                        src={getPieceImage(pieceData)} 
                         alt={`${pieceData.color} ${pieceData.type}`}
-                        className="piece"
+                        className="piece" 
                       />
+                    )}
+
+                    {pieceData && pieceData.type !== "powerup" && pieceData.has_powerup && (
+                      <div className="piece-wrapper">
+                        <img 
+                          src={getPieceImage(pieceData)}
+                          alt={`${pieceData.color} ${pieceData.type}`}
+                          className="piece"
+                        />
+                        <img 
+                          src={flame}
+                          alt="Super Saiyan Power"
+                          className="ssj-overlay"
+                        />
+                      </div>
+                    )}
+
+                    {pieceData?.type === "powerup" && (
                       <img 
-                        src={flame}
-                        alt="Super Saiyan Power"
-                        className="ssj-overlay"
-                      />
-                    </div>
-                  )}
-
-
-                  {pieceData?.type === "powerup" && (
-                    <img 
                         src={powerup}
                         alt="Powerup"
                         className="powerup-spin"
-                    />
-                  )}
+                      />
+                    )}
 
-                  {isValidMove && (
-                    <img
-                      src={red_circle}
-                      height="35px"
-                      width="35px"
-                      className={"validmove"}/>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
+                    {isValidMove && (
+                      <img
+                        src={red_circle}
+                        height="35px"
+                        width="35px"
+                        className="validmove"
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
-    </div>
-    </div>
-  );
+  </div>
+);
 }
