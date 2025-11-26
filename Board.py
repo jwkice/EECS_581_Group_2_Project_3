@@ -324,7 +324,8 @@ class Board():
                         #Call transform_pawn
                         current_piece = self.transform_pawn(current_piece)
                     elif current_piece.character.lower() == 'k':
-                        current_piece.lives_remaining += 1
+                        if current_piece.lives_remaining < 4:
+                            current_piece.lives_remaining += 1
                     else:
                         current_piece.has_powerup = True
 
