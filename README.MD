@@ -1,5 +1,19 @@
 ### For Development
 
+**Install Node.js (if not already installed):**  
+Download and install from:
+```bash
+https://nodejs.org/en/download
+```
+
+
+
+**Install FastAPI**
+
+```bash
+pip install "fastapi[standard]"
+```
+
 **Navigate into `frontend/src`:**
 
 ```bash
