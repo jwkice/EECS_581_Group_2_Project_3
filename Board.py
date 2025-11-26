@@ -80,35 +80,35 @@ class Board():
         
         for i in range(16): #Place pawns
             if i < 8:   #Place white pawns
-                self.add_piece(self.player_one, 'pawn', 6, i)
+                self.add_piece('white', 'pawn', 6, i)
             else:   #Place black pawns
-                self.add_piece(self.player_two, 'pawn', 1, i-8)
+                self.add_piece('black', 'pawn', 1, i-8)
         
         #Place rooks
-        self.add_piece(self.player_one, 'rook', 7, 0)
-        self.add_piece(self.player_one, 'rook', 7, 7)
-        self.add_piece(self.player_two, 'rook', 0, 0)
-        self.add_piece(self.player_two, 'rook', 0, 7)
+        self.add_piece('white', 'rook', 7, 0)
+        self.add_piece('white', 'rook', 7, 7)
+        self.add_piece('black', 'rook', 0, 0)
+        self.add_piece('black', 'rook', 0, 7)
 
         #Place knights
-        self.add_piece(self.player_one, 'knight', 7, 1)
-        self.add_piece(self.player_one, 'knight', 7, 6)
-        self.add_piece(self.player_two, 'knight', 0, 1)
-        self.add_piece(self.player_two, 'knight', 0, 6)
+        self.add_piece('white', 'knight', 7, 1)
+        self.add_piece('white', 'knight', 7, 6)
+        self.add_piece('black', 'knight', 0, 1)
+        self.add_piece('black', 'knight', 0, 6)
 
         #Place bishops
-        self.add_piece(self.player_one, 'bishop', 7, 2)
-        self.add_piece(self.player_one, 'bishop', 7, 5)
-        self.add_piece(self.player_two, 'bishop', 0, 2)
-        self.add_piece(self.player_two, 'bishop', 0, 5)
+        self.add_piece('white', 'bishop', 7, 2)
+        self.add_piece('white', 'bishop', 7, 5)
+        self.add_piece('black', 'bishop', 0, 2)
+        self.add_piece('black', 'bishop', 0, 5)
 
         #Place queens
-        self.add_piece(self.player_one, 'queen', 7, 3)
-        self.add_piece(self.player_two, 'queen', 0, 3)
+        self.add_piece('white', 'queen', 7, 3)
+        self.add_piece('black', 'queen', 0, 3)
 
         #Place kings
-        self.add_piece(self.player_one, 'king', 7, 4)
-        self.add_piece(self.player_two, 'king', 0, 4)        
+        self.add_piece('white', 'king', 7, 4)
+        self.add_piece('black', 'king', 0, 4)        
 
     
     def _reset_atk_by(self):
@@ -154,7 +154,7 @@ class Board():
         output += '   a  b  c  d  e  f  g  h\n'
         return output
 
-    def add_piece(self, player, piece_type, rank, file):
+    def add_piece(self, color, piece_type, rank, file):
         '''
             Args:
                 self
@@ -167,10 +167,7 @@ class Board():
             Purpose:
                 initializes a new piece of the indicated type, assigns it to the given square on the board
         '''
-        if type(player) is str:
-            color = player
-        else:
-            color = player.color
+
         if self.board_array[rank][file].piece is None:
             if piece_type == 'pawn':
                 new_piece = Pieces.Pawn(color, rank, file)
@@ -190,7 +187,6 @@ class Board():
                 raise(RuntimeError(f'Invalid Piece Type: {piece_type}'))
             
             self.board_array[rank][file].piece = new_piece
-            #player.pieces.append(new_piece)
             return new_piece
         else:
             raise(RuntimeError(f'Square ({rank}, {file}) already has a piece'))
@@ -364,7 +360,7 @@ class Board():
                 rand_file = rng.randint(0,7)
 
                 if self.board_array[rand_rank][rand_file].piece == None:
-                    self.add_piece(self.player_one, 'powerup', rand_rank, rand_file)
+                    self.add_piece('green', 'powerup', rand_rank, rand_file)
                     break
                 
 
