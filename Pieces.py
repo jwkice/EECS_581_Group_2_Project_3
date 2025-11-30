@@ -13,9 +13,10 @@ Output(s): None
 Author(s):  Jacob Kice
             Joe Hotze
             Gunther Luechtefeld
+            Srihari Meyoor
 Outside Source(s):  None
 Creation Date: 10/22/2025
-Updated Date: 11/07/2025
+Updated Date: 11/25/2025
 '''
 # Idea: each piece is fed the board as well and uses that to broadcast its own valid moves
 import Board as B # testing

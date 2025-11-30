@@ -1,3 +1,15 @@
+'''
+Module Name: main.py
+Purpose: API interface
+Input(s): None
+Output(s): None
+Author(s):  Jamie King
+            Srihari Meyoor
+Outside Source(s):  None
+Creation Date: 11/09/2025
+Updated Date: 11/23/2025
+'''
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel

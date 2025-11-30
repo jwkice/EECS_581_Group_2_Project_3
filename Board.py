@@ -8,7 +8,7 @@ Author(s):  Jacob Kice
             Gunther Luechtefeld
 Outside Source(s):  None
 Creation Date: 10/22/2025
-Updated Date: 11/07/2025
+Updated Date: 11/26/2025
 '''
 
 import random as rng
@@ -204,9 +204,6 @@ class Board():
                     if new selection, obtains and displays valid moves of current piece
                     if same as currently selected, unselects that square
                     if in list of valid moves, calls move function and clears selection
-            NOTE:
-                needs integration with player objects
-                needs checking for invalid selections if not handled by interface
         '''
         if self.selected is None:
             self.selected = (rank, file)
@@ -221,6 +218,15 @@ class Board():
                 self.selected_moves = None
 
     def transform_pawn(self, piece):
+        '''
+            Args:
+                self
+                piece: object of the pawn that is being transformed
+            Output:
+                returns newly created piece that replaces the pawn
+            Purpose:
+                transforms a given pawn into another piece, for use with powerup, reached final rank
+        '''
         chance = rng.random()
         if chance > 0.9:
             #10% chance of becoming a queen
@@ -246,8 +252,6 @@ class Board():
                 returns nothing
             Purpose:
                 moves currently selected piece to new square and spawns powerups if applicable
-            NOTE:
-                needs integration of capture function once player objects are integrated
         '''
         bishop_conversion = False
         current_piece = self.board_array[self.selected[0]][self.selected[1]].piece # select piece to be moved

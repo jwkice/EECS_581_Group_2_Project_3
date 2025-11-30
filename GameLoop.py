@@ -1,3 +1,15 @@
+'''
+Module Name: GameLoop.py
+Purpose: process input and output for terminal interface, for use in dev and testing
+Input(s): None
+Output(s): None
+Author(s):  Joe Hotze
+            Gunther Luechtefeld
+Outside Source(s):  None
+Creation Date: 11/09/2025
+Updated Date: 11/15/2025
+'''
+
 from Player import Player
 from Board import Board
 import Pieces
