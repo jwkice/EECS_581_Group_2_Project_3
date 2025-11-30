@@ -42,6 +42,7 @@ python main.py
 ### For Operation
 
 **Controls:**
+
 Click on a piece to select it.
 The board will display the possible moves that piece can make.
 Click a target position to move the piece.
@@ -52,6 +53,7 @@ This works whether the current game has ended or not.
 
 
 **Gameplay (differences from baseline chess):**
+
 The game does not implement check or checkmate mechanics.
 Instead, the King can be attacked directly, and has lives.
 The King begins the game with three lives, and loses one every time he is attacked.
@@ -69,6 +71,7 @@ Powerups are either used on acquisition or on the next move of that piece.
 There is only one type of powerup and its effect depends on the type of piece that acquires it.
 
 **Powerup Effects:**
+
 King:
 On acquisition of a powerup, the King gains another life, up to a maximum of four.
 
