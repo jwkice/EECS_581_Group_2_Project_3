@@ -1,5 +1,9 @@
 ### For Development
 
+Group 3 Project Video:
+https://drive.google.com/file/d/1Z-j8uH76jGFo-N-2eG1Fkg8iAONcdExt/view?usp=drive_link
+
+
 **Install Node.js (if not already installed):**  
 Download and install from:
 ```bash
